@@ -1,0 +1,3 @@
+interface IBrowserClient {
+    init(): void;
+}

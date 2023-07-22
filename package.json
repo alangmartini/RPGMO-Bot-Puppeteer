@@ -1,0 +1,27 @@
+{
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "puppeteer": "^20.8.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.1.6"
+  },
+  "name": "shadow-puppeteer",
+  "version": "1.0.0",
+  "main": "./src/main.ts",
+  "scripts": {
+    "start": "tsc && node ./src/main.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alangmartini/RPGMO-Bot.git"
+  },
+  "author": "alangmartini",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alangmartini/RPGMO-Bot/issues"
+  },
+  "homepage": "https://github.com/alangmartini/RPGMO-Bot#readme",
+  "description": ""
+}
