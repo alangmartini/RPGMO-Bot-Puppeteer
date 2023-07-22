@@ -3,4 +3,5 @@ sourceCodes
 htmls
 .env
 original
-*.ts
+**/*.js
+*.js
