@@ -2,7 +2,8 @@ enum ArrowKeys {
   ArrowLeft = 'ArrowLeft',
   ArrowRight = 'ArrowRight',
   ArrowUp = 'ArrowUp',
-  ArrowDown = 'ArrowDown'
+  ArrowDown = 'ArrowDown',
+  Escape = 'Escape'
 }
 
 export default ArrowKeys

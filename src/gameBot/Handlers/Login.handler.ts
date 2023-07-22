@@ -1,4 +1,5 @@
 import BrowserClient from '../../browserClient/BrowserClient.client';
+import ArrowKeys from '../../browserClient/enums/ArrowKeys.enum';
 import RpgMOSelectors from '../../browserClient/enums/RpgMOSelectors.enum';
 import PageHandler from './Page.handler';
 
@@ -16,9 +17,6 @@ export default class LoginHandler {
   }
 
   async login() {
-    console.log('this.login_name is:', this.login_name);
-    console.log('this.login_pass is:', this.login_pass);
-
     if (this.login_name == null || this.login_pass == null) {
       throw new Error('Missing username or password');
     }
@@ -43,6 +41,21 @@ export default class LoginHandler {
     }
     
     await this.browserClient.selectOption(RpgMOSelectors.WORLD_OPTIONS, worldOptions);
+
+    // Wait for server to be updated
+    await this.browserClient.waitTillTextContentMatches(RpgMOSelectors.IS_CONNECTED, 'Conectado');
+
+    await this.browserClient.click(RpgMOSelectors.ENTER_GAME_BUTTON);
+
+    // Wait till login process end
+    await this.browserClient.getPage()!.waitForSelector(RpgMOSelectors.LOGIN_INPUT, { visible: false, timeout: 10000 });
+    await this.browserClient.getPage()!.waitForSelector("#dialog_prompt_close", { visible: true, timeout: 10000 });
+
+    // Send two escapes to close open windows
+    await this.browserClient.sendKeyPress(ArrowKeys.Escape);
+    await this.browserClient.sendKeyPress(ArrowKeys.Escape);
+    
+
   }
 
   evalGetWorldOptions(WorldOptionsSelector: string) {

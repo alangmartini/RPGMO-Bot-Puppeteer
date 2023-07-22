@@ -7,6 +7,7 @@ const players: any[] = [];
 export default class PageHandler {
   private browserClient: BrowserClient;
   private login_selector = RpgMOSelectors.LOGIN_INPUT;
+  private username = process.env.RPGMO_USERNAME;
   
   constructor(browserClient: BrowserClient) {
     this.browserClient = browserClient;
@@ -27,14 +28,21 @@ export default class PageHandler {
   }
 
   evalVerifyIsLogged(Username: string) {
-    return players[0].name = Username;
+    console.log("username is", Username)
+    console.log("name is", players[0].name)
+    return players[0].name === Username;
   }
 
   async verifyIsLogged() {
-    const isLogged = await this.browserClient.evaluateFunctionWithArgsAndReturn(
-      this.evalVerifyIsLogged, this.login_selector
-    ) as boolean;
+    const a = await this.browserClient.getPage()?.waitForSelector(RpgMOSelectors.WORLD_OPTIONS, { visible: false, timeout: 10000 });
+    console.log('a is:', a);
 
+
+    const isLogged = await this.browserClient.evaluateFunctionWithArgsAndReturn(
+      this.evalVerifyIsLogged, this.username
+      ) as boolean;
+      
+    console.log('isLogged is:', isLogged);
     if (!isLogged) {
       throw new Error('Not logged in');
     }

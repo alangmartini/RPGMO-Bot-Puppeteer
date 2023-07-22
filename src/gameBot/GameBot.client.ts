@@ -24,6 +24,7 @@ class GameBot {
     await this.browserClient.getPage()?.waitForSelector(RpgMOSelectors.WORLD_OPTIONS, { visible: true, timeout: 10000 });
     
     await this.loginHandler.login();
+    
     await this.pageHandler.verifyIsLogged();
 
     await this.injectionHandler.modifyCaptchaShow();

@@ -14,7 +14,7 @@ export default class BrowserClient implements IBrowserClient{
   async init() {
     this.browser = await puppeteer.launch({
       headless: false,
-      args: ['--enable-webgl', '--enable-features=WebRTC']
+      args: ['--enable-webgl', '--enable-features=WebRTC',  "--disable-notifications"]
     });
     this.page = await this.browser.newPage();
   }
@@ -52,6 +52,19 @@ export default class BrowserClient implements IBrowserClient{
 
   async selectOption(selector: string, value: string) {
     await this.page!.select(selector, value);
+  }
+
+  async waitTillTextContentMatches(selector: string, text: string) {
+    await this.page!
+      .waitForFunction(
+        (connectionSelector: string, text: string) => document.querySelector(connectionSelector)!.textContent === text,
+        { timeout: 10000 },
+        selector, text
+      );
+  }
+
+  async click(selector: string) {
+    await this.page!.click(selector);
   }
   
   async close() {

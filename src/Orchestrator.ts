@@ -24,8 +24,8 @@ export default class Orchestrator {
     await this.browserClient.goto('https://data.mo.ee/loader.html');
     try {
       await this.gameBot.login();
-    } catch {
-      console.log("ops")
+    } catch (e: any){
+      console.log("ops", e.message)
     }
   }
 
