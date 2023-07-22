@@ -34,15 +34,14 @@ export default class PageHandler {
   }
 
   async verifyIsLogged() {
-    const a = await this.browserClient.getPage()?.waitForSelector(RpgMOSelectors.WORLD_OPTIONS, { visible: false, timeout: 10000 });
-    console.log('a is:', a);
+    // Thow error if world options is not visible
+    await this.browserClient.getPage()?.waitForSelector(RpgMOSelectors.WORLD_OPTIONS, { visible: false, timeout: 10000 });
 
 
     const isLogged = await this.browserClient.evaluateFunctionWithArgsAndReturn(
       this.evalVerifyIsLogged, this.username
       ) as boolean;
       
-    console.log('isLogged is:', isLogged);
     if (!isLogged) {
       throw new Error('Not logged in');
     }

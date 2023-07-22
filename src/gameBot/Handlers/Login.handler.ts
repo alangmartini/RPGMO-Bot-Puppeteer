@@ -3,6 +3,8 @@ import ArrowKeys from '../../browserClient/enums/ArrowKeys.enum';
 import RpgMOSelectors from '../../browserClient/enums/RpgMOSelectors.enum';
 import PageHandler from './Page.handler';
 
+const players: any[] = [];
+
 export default class LoginHandler {
   private browserClient: BrowserClient;
   private pageHandler: PageHandler;
@@ -18,7 +20,13 @@ export default class LoginHandler {
 
   async login() {
     if (this.login_name == null || this.login_pass == null) {
-      throw new Error('Missing username or password');
+      throw new Error('Missing username or password, set them in .env file');
+    }
+
+    try {
+      await this.browserClient.getPage()?.waitForSelector(RpgMOSelectors.WORLD_OPTIONS, { visible: true, timeout: 10000 });
+    } catch {
+      throw new Error('Waited for worlds to appears, but never did.');
     }
 
     await this.pageHandler.verifyIsLoginPage();
@@ -30,7 +38,6 @@ export default class LoginHandler {
       this.evalGetWorldOptions, RpgMOSelectors.WORLD_OPTIONS
       ) as string;
 
-    console.log(worldOptions);
 
     if (worldOptions == null) {
       throw new Error('No worlds available');
@@ -43,19 +50,22 @@ export default class LoginHandler {
     await this.browserClient.selectOption(RpgMOSelectors.WORLD_OPTIONS, worldOptions);
 
     // Wait for server to be updated
+    console.log("Waiting for server to be conected");
     await this.browserClient.waitTillTextContentMatches(RpgMOSelectors.IS_CONNECTED, 'Conectado');
 
+    // Click enter game button
+    console.log("Clicking enter game button");
     await this.browserClient.click(RpgMOSelectors.ENTER_GAME_BUTTON);
 
     // Wait till login process end
-    await this.browserClient.getPage()!.waitForSelector(RpgMOSelectors.LOGIN_INPUT, { visible: false, timeout: 10000 });
-    await this.browserClient.getPage()!.waitForSelector("#dialog_prompt_close", { visible: true, timeout: 10000 });
+    console.log("Waiting for login to finish");
+    await this.browserClient.getPage()!.waitForFunction(
+      (username) => players[0].name === username,
+      { timeout: 10000 },
+      this.login_name
+    );
 
-    // Send two escapes to close open windows
-    await this.browserClient.sendKeyPress(ArrowKeys.Escape);
-    await this.browserClient.sendKeyPress(ArrowKeys.Escape);
-    
-
+    console.log("Login finished");  
   }
 
   evalGetWorldOptions(WorldOptionsSelector: string) {

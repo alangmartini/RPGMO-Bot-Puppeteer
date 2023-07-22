@@ -7,6 +7,18 @@ export default class InjectionHandler {
     this.browserClient = browserClient;
   }
 
+  setHotkeys = async () => {
+    await this.browserClient.getPage()!.evaluate(() => {
+      // Get the object stored at key "1"
+      let kb = JSON.parse(localStorage.getItem("kb")!);
+      kb[1]["55"] = [81, "Q"];
+      kb[1]["63"] = [88, "X"];
+        
+      // Save the updated object back to localStorage
+      localStorage.setItem("kb", JSON.stringify(kb));
+    });
+  }
+
   modifyCaptchaShow = async () => {
     await this.browserClient.getPage()!.evaluate(this.fn);
     await this.browserClient.getPage()!.evaluate(`

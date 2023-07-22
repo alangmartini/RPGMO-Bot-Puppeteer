@@ -22,11 +22,10 @@ export default class Orchestrator {
     await this.browserClient.init();
     await this.browserClient.config();
     await this.browserClient.goto('https://data.mo.ee/loader.html');
-    try {
-      await this.gameBot.login();
-    } catch (e: any){
-      console.log("ops", e.message)
-    }
+  
+    await this.gameBot.login();
+
+    await this.gameBot.runWatchers();
   }
 
   // async goto(url) {
