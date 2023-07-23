@@ -1,6 +1,6 @@
 import * as puppeteer from 'puppeteer';
 import PuppeteerConfigs from './configs/PuppeteerConfigs.handler';
-import ArrowKeys from './enums/ArrowKeys.enum';
+import ArrowKeys from '../gameBot/enums/ArrowKeys.enum';
 
 export default class BrowserClient implements IBrowserClient{
   private browser: puppeteer.Browser | null;

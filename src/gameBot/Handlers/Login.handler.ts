@@ -1,6 +1,6 @@
 import BrowserClient from '../../browserClient/BrowserClient.client';
-import ArrowKeys from '../../browserClient/enums/ArrowKeys.enum';
-import RpgMOSelectors from '../../browserClient/enums/RpgMOSelectors.enum';
+import ArrowKeys from '../enums/ArrowKeys.enum';
+import RpgMOSelectors from '../enums/RpgMOSelectors.enum';
 import PageHandler from './Page.handler';
 
 const players: any[] = [];

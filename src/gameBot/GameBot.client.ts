@@ -1,11 +1,13 @@
 import BrowserClient from '../browserClient/BrowserClient.client';
-import RpgMOSelectors from '../browserClient/enums/RpgMOSelectors.enum';
+import RpgMOSelectors from './enums/RpgMOSelectors.enum';
 import dotenv from 'dotenv';
 import PageHandler from './Handlers/Page.handler';
 import LoginHandler from './Handlers/Login.handler';
 import InjectionHandler from './Handlers/Injection.handler';
 import CaptchaHandler from './Handlers/Captcha.handler';
 import { EventEmitter } from 'events';
+import MapHandler from './Handlers/Map.handler';
+import PathHandler from './Handlers/PathHandler';
 
 dotenv.config();
 
@@ -18,18 +20,19 @@ class GameBot {
   private pageHandler: PageHandler;
   private injectionHandler: InjectionHandler;
   private captchaHandler: CaptchaHandler;
-  // private mapHandler: MapHandler;
+  private mapHandler: MapHandler;
+  private pathHandler: PathHandler;
 
-
-  // Watchers as tasks will watch for these vars
+  // Watchers tasks will watch for these vars
+  // to know when to pause or start again
   private pause: boolean = false;
   private resume: boolean = false;
 
-  // EventEmitter to handle events
-  private eventEmitter: EventEmitter;
-
   // A watcher is a loop that checks for something.
   private watchers: Array<Promise<void>> = [];
+
+  // EventEmitter to handle events
+  private eventEmitter: EventEmitter;
 
   constructor(browserClient: BrowserClient) {
     this.eventEmitter = new EventEmitter();
@@ -40,11 +43,16 @@ class GameBot {
     });
 
     this.browserClient = browserClient;
+
+    // Independent handlers
     this.pageHandler = new PageHandler(this.browserClient);
-    this.loginHandler = new LoginHandler(this.browserClient, this.pageHandler);
     this.injectionHandler = new InjectionHandler(this.browserClient);
+    this.pathHandler = new PathHandler(this.browserClient);
+    
+    // Dependent handlers
+    this.loginHandler = new LoginHandler(this.browserClient, this.pageHandler);
     this.captchaHandler = new CaptchaHandler(this.browserClient, this.eventEmitter, this.pause, this.resume);
-    // this.mapHandler = new MapHandler(this.browserClient);
+    this.mapHandler = new MapHandler(this.browserClient, this.pathHandler);
   }
 
   async login() {
@@ -60,20 +68,23 @@ class GameBot {
   }
 
   async runWatchers() {
-    this.watchers = [this.watchCaptcha()];
+    this.watchers = [this.watchCaptcha(), this.watchMap()];
     await Promise.all(this.watchers);
   }
 
   async watchCaptcha() {
     while (!this.pause) {
       await this.captchaHandler.checkForCaptcha();
-      await new Promise(r => setTimeout(r, 1000));
+      await new Promise(r => setTimeout(r, 5000));
+    }
+  }
+
+  async watchMap() {
+    while (!this.pause) {
+      await this.mapHandler.scanMapDirect();
+      await new Promise(r => setTimeout(r, 20000));
     }
   }
 }
 
-
-
 export default GameBot;
-
-

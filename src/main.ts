@@ -1,6 +1,6 @@
 import Orchestrator from './Orchestrator';
 import BrowserClient from './browserClient/BrowserClient.client';
-import ArrowKeys from './browserClient/enums/ArrowKeys.enum';
+import ArrowKeys from './gameBot/enums/ArrowKeys.enum';
 
 (async () => {
   const orchestrator: Orchestrator = new Orchestrator();

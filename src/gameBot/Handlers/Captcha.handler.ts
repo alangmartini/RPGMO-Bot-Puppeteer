@@ -12,6 +12,7 @@ export default class CaptchaHandler {
   private eventEmitter: EventEmitter;
   private pause: boolean;  
   private resume: boolean;
+  private previousCaptcha: string = '';
 
   constructor(browserClient: BrowserClient, eventEmitter: EventEmitter, pause: boolean, resume: boolean) {
     this.browserClient = browserClient;
@@ -25,7 +26,7 @@ export default class CaptchaHandler {
       return Captcha.active;
     });
 
-    if (isCaptchaActive) {
+    if (isCaptchaActive && this.previousCaptcha !== isCaptchaActive) {
       console.log("Found captcha")
       await this.downloadCaptcha();
     }
@@ -38,10 +39,13 @@ export default class CaptchaHandler {
     this.eventEmitter.emit('pause');
     
     console.log("Getting captcha url");
+
     const imgSrc = await this.browserClient.evaluateFunctionWithArgsAndReturn(() => {
       return (document.querySelector('#captcha_img_div') as any).style.backgroundImage;
     });
     
+    this.previousCaptcha = imgSrc;
+
     console.log("Processing");
     const base64Data = imgSrc.replace(/^url\("data:image\/jpeg;base64,/, "").replace(/"\)$/, "");
     const captchaDir = path.join(__dirname, '..', '..', '..', 'captchas');

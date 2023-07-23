@@ -1,5 +1,5 @@
 import BrowserClient from '../../browserClient/BrowserClient.client';
-import RpgMOSelectors from '../../browserClient/enums/RpgMOSelectors.enum';
+import RpgMOSelectors from '../enums/RpgMOSelectors.enum';
 
 // Game variables that are necessary so linter wont cry
 const players: any[] = [];
