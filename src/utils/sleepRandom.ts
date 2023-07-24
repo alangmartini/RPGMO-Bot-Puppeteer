@@ -6,7 +6,6 @@ const sleepRandom = async () => {
   const max = 10000;
   const randomTime = Math.floor(Math.random() * (max - min + 1) + min);
 
-  console.log("sleeping for", randomTime, "ms");
   await sleep(randomTime);
 }
 

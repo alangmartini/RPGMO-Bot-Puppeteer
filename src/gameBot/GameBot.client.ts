@@ -9,6 +9,7 @@ import { EventEmitter } from 'events';
 import MapHandler from './Handlers/Map.handler';
 import PathHandler from './Handlers/PathHandler';
 import sleep from '../utils/sleep';
+import Watcher from './Watchers/Watcher.watcher';
 
 dotenv.config();
 
@@ -31,6 +32,7 @@ class GameBot {
 
   // A watcher is a loop that checks for something.
   protected watchers: Array<Promise<void>> = [];
+  private captchaWatcher: Watcher;
 
   // EventEmitter to handle events
   protected eventEmitter: EventEmitter;
@@ -54,6 +56,15 @@ class GameBot {
     this.loginHandler = new LoginHandler(this.browserClient, this.pageHandler);
     this.captchaHandler = new CaptchaHandler(this.browserClient, this.eventEmitter, this.pause, this.resume);
     this.mapHandler = new MapHandler(this.browserClient);
+
+    // Watchers
+
+    this.captchaWatcher = new Watcher(
+        this.eventEmitter,
+        'captcha',
+        5000,
+        this.captchaHandler.checkForCaptcha.bind(this.captchaHandler)
+      );
   }
 
   async login() {
@@ -69,8 +80,9 @@ class GameBot {
   }
 
   async runWatchers() {
-    this.watchers = [this.watchCaptcha(), this.watchMap()];
-    await Promise.all(this.watchers);
+    this.captchaWatcher.run();
+    // this.watchers = [this.watchCaptcha(), this.watchMap()];
+    // await Promise.all(this.watchers);
   }
 
   async watchCaptcha() {
@@ -79,9 +91,9 @@ class GameBot {
       await new Promise(r => setTimeout(r, 5000));
     }
 
-    await sleep(600000);
+    // await sleep(600000);
 
-    this.eventEmitter.emit('resume');
+    // this.eventEmitter.emit('resume');
   }
 
   async watchMap() {
@@ -90,7 +102,7 @@ class GameBot {
       await new Promise(r => setTimeout(r, 20000));
     }
 
-    this.eventEmitter.emit('resume');
+    // this.eventEmitter.emit('resume');
   }
 }
 

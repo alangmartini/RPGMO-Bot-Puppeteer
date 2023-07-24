@@ -38,11 +38,9 @@ export default class MovementHandler {
   }
 
   async moveToDestination(path: Path) {
-    console.log("starting to move");
     const pathLength = path.length;
 
     for (let i = 0; i < pathLength; i++) {
-      console.log("Updating current position");
       await this.updateCurrentLocation();
 
       // In Path, the last SquareLocale is the nearest.
@@ -52,19 +50,16 @@ export default class MovementHandler {
       // console.log("current pos is", this.currentLocation);
 
       while (nextSquare.x !== this.currentLocation.x || nextSquare.y !== this.currentLocation.y) {
-        console.log("deciding direction to move");
         await this.decideDirectionToMove(nextSquare, this.currentLocation);
         await this.updateCurrentLocation();
       }
     }
 
-    console.log("finished moving");
     await sleep(500);
   }
 
   async decideDirectionToMove(nextSquare: SquareLocale, currentSquare: SquareLocale) {
     if (nextSquare.x > currentSquare.x) {
-      console.log("moving right");
       await this.browserClient.sendKeyPress(ArrowKeys.ArrowRight);
       // await sleep(moveDelay);
       await this.waitStopMoving();
@@ -73,7 +68,6 @@ export default class MovementHandler {
     }
 
     if (nextSquare.x < currentSquare.x) {
-      console.log("moving left");
       await this.browserClient.sendKeyPress(ArrowKeys.ArrowLeft);
       // await sleep(moveDelay);
 
@@ -82,7 +76,6 @@ export default class MovementHandler {
     }
 
     if (nextSquare.y > currentSquare.y) {
-      console.log("moving up");        
       await this.browserClient.sendKeyPress(ArrowKeys.ArrowUp);
       // await sleep(moveDelay);
 
@@ -91,7 +84,6 @@ export default class MovementHandler {
     }
 
     if (nextSquare.y < currentSquare.y) {
-      console.log("moving down");
       await this.browserClient.sendKeyPress(ArrowKeys.ArrowDown);
       // await sleep(moveDelay);
 

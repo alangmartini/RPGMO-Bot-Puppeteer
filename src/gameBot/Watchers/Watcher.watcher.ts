@@ -1,7 +1,7 @@
 import { EventEmitter } from 'events';
 import sleep from '../../utils/sleep';
 
-class Watcher {
+export default class Watcher {
   private isRunning: boolean = false;
   private pause: boolean = false;
 
