@@ -12,7 +12,7 @@ export default class PuppeteerConfigs {
   static setViewport = async (page: Page) => {
     await page.setViewport({
       width: 1520,
-      height: 720,
+      height: 420,
     });
   }
   
@@ -54,6 +54,7 @@ export default class PuppeteerConfigs {
   }
 
   static applyConfigs = async (page: Page) => {
+    page.browserContext().overridePermissions('https://data.mo.ee', ['geolocation', 'notifications']);
     await PuppeteerConfigs.makeUndetectable(page);
     await PuppeteerConfigs.setViewport(page);
     await PuppeteerConfigs.setHeaders(page);

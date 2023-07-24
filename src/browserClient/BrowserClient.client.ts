@@ -14,9 +14,11 @@ export default class BrowserClient implements IBrowserClient{
   async init() {
     this.browser = await puppeteer.launch({
       headless: false,
-      args: ['--enable-webgl', '--enable-features=WebRTC',  "--disable-notifications"]
+      // args: ['--enable-webgl', '--enable-features=WebRTC',  "--disable-notifications"]
+      args: ['--enable-webgl', '--enable-features=WebRTC']
     });
     this.page = await this.browser.newPage();
+
   }
 
   async config() {

@@ -34,20 +34,23 @@ export default class LoginHandler {
     await this.browserClient.typeInPage(this.login_selector, this.login_name);
     await this.browserClient.typeInPage(this.password_selector, this.login_pass);
 
-    const worldOptions = await this.browserClient.evaluateFunctionWithArgsAndReturn(
-      this.evalGetWorldOptions, RpgMOSelectors.WORLD_OPTIONS
-      ) as string;
-
-
-    if (worldOptions == null) {
-      throw new Error('No worlds available');
-    }
-
-    if (typeof worldOptions !== 'string') {
-      throw new Error('World options is not a string');
-    }
+    try {
+      const worldOptions = await this.browserClient.evaluateFunctionWithArgsAndReturn(
+        this.evalGetWorldOptions, RpgMOSelectors.WORLD_OPTIONS
+        ) as string;
     
-    await this.browserClient.selectOption(RpgMOSelectors.WORLD_OPTIONS, worldOptions);
+      if (worldOptions == null) {
+        throw new Error('No worlds available');
+      }
+
+      if (typeof worldOptions !== 'string') {
+        throw new Error('World options is not a string');
+      }
+
+      await this.browserClient.selectOption(RpgMOSelectors.WORLD_OPTIONS, worldOptions);
+    } catch (e) {
+      console.log("Something went wrong when grabbing world options, logging on world 1.");
+    }
 
     // Wait for server to be updated
     console.log("Waiting for server to be conected");

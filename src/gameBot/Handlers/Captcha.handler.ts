@@ -28,7 +28,9 @@ export default class CaptchaHandler {
 
     if (isCaptchaActive && this.previousCaptcha !== isCaptchaActive) {
       console.log("Found captcha")
+      this.eventEmitter.emit('pause');
       await this.downloadCaptcha();
+      return;
     }
 
     console.log("No captcha found")
@@ -36,7 +38,6 @@ export default class CaptchaHandler {
 
   async downloadCaptcha() {
     console.log("Pausing all other activities");
-    this.eventEmitter.emit('pause');
     
     console.log("Getting captcha url");
 
@@ -66,6 +67,5 @@ export default class CaptchaHandler {
     });
 
     console.log("Finished download captcha");
-    this.eventEmitter.emit('resume');
   }
 }

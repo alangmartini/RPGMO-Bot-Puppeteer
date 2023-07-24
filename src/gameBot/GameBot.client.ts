@@ -8,31 +8,32 @@ import CaptchaHandler from './Handlers/Captcha.handler';
 import { EventEmitter } from 'events';
 import MapHandler from './Handlers/Map.handler';
 import PathHandler from './Handlers/PathHandler';
+import sleep from '../utils/sleep';
 
 dotenv.config();
 
 class GameBot {
   // BrowserClient handles all operations with Chromium
-  private browserClient: BrowserClient;
+  protected browserClient: BrowserClient;
 
   // Handlers
-  private loginHandler: LoginHandler;
-  private pageHandler: PageHandler;
-  private injectionHandler: InjectionHandler;
-  private captchaHandler: CaptchaHandler;
-  private mapHandler: MapHandler;
-  private pathHandler: PathHandler;
+  protected loginHandler: LoginHandler;
+  protected pageHandler: PageHandler;
+  protected injectionHandler: InjectionHandler;
+  protected captchaHandler: CaptchaHandler;
+  protected mapHandler: MapHandler;
+  protected pathHandler: PathHandler;
 
   // Watchers tasks will watch for these vars
   // to know when to pause or start again
-  private pause: boolean = false;
-  private resume: boolean = false;
+  protected pause: boolean = false;
+  protected resume: boolean = false;
 
   // A watcher is a loop that checks for something.
-  private watchers: Array<Promise<void>> = [];
+  protected watchers: Array<Promise<void>> = [];
 
   // EventEmitter to handle events
-  private eventEmitter: EventEmitter;
+  protected eventEmitter: EventEmitter;
 
   constructor(browserClient: BrowserClient) {
     this.eventEmitter = new EventEmitter();
@@ -52,7 +53,7 @@ class GameBot {
     // Dependent handlers
     this.loginHandler = new LoginHandler(this.browserClient, this.pageHandler);
     this.captchaHandler = new CaptchaHandler(this.browserClient, this.eventEmitter, this.pause, this.resume);
-    this.mapHandler = new MapHandler(this.browserClient, this.pathHandler);
+    this.mapHandler = new MapHandler(this.browserClient);
   }
 
   async login() {
@@ -77,6 +78,10 @@ class GameBot {
       await this.captchaHandler.checkForCaptcha();
       await new Promise(r => setTimeout(r, 5000));
     }
+
+    await sleep(600000);
+
+    this.eventEmitter.emit('resume');
   }
 
   async watchMap() {
@@ -84,6 +89,8 @@ class GameBot {
       await this.mapHandler.scanMapDirect();
       await new Promise(r => setTimeout(r, 20000));
     }
+
+    this.eventEmitter.emit('resume');
   }
 }
 

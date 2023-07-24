@@ -1,5 +1,4 @@
 import BrowserClient from '../../browserClient/BrowserClient.client';
-import PathHandler from './PathHandler';
 
 const obj_g = (a: any) => { console.log(a) };
 const current_map = 0;
@@ -32,21 +31,12 @@ export interface MapObject {
   "temp": {}
 }
 
-
 export default class MapHandler {
   private browserClient: BrowserClient;
-  private pathHandler: PathHandler;
-  private currentMap: MapObject[] = [];
+  public currentMap: MapObject[] = [];
 
-  constructor(browserClient: BrowserClient, pathHandler: PathHandler) {
+  constructor(browserClient: BrowserClient) {
     this.browserClient = browserClient;
-    this.pathHandler = pathHandler;
-  }
-
-  async findNearesFirTree() {
-    const path = await this.pathHandler.findNearestObjectPath(this.currentMap, 'Pinheiro');
-
-    return path;
   }
 
   evalGetCurrentMapDirect(): any {

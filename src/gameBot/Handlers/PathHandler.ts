@@ -5,6 +5,26 @@ import { MapObject } from './Map.handler';
 const players: any = [];
 const findPathFromTo = (a: any, b: any, c: any) => {}
 
+export interface SquareLocale {
+  "x": number,
+  "y": number,
+}
+
+export interface RawSquareLocale {
+  "i": number,
+  "j": number,
+}
+
+export type RawPath = RawSquareLocale[];
+export type Path = SquareLocale[];
+
+export interface PathInformation {
+  path: Path,
+  object: MapObject,
+  location: SquareLocale,
+}
+
+
 export default class PathHandler {
   private browserClient: BrowserClient;
 
@@ -16,29 +36,33 @@ export default class PathHandler {
     return findPathFromTo(players[0], { i: x, j: y }, players[0]);
   }
 
-  async getPathTo(x: number, y: number) {
-    const path = await this.browserClient.evaluateFunctionWithArgsAndReturn(this.evalGetPathTo, x, y);
+  async getPathTo(x: number, y: number): Promise<Path> {
+    const path: RawPath = await this.browserClient.evaluateFunctionWithArgsAndReturn(this.evalGetPathTo, x, y);
 
-    return path;
+    return path.map((square) => ({ x: square.i, y: square.j }));
   }
 
-  async findNearestObjectPath(objects: MapObject[], objectName: string) {
-    const objectsToFind = objects.filter((object) => object.name === objectName);
+  async findNearestObjectPath(objects: MapObject[], objectName: string): Promise<PathInformation> {
+    const objectsToFind: MapObject[] = objects.filter((object) => object.name === objectName);
 
-    const allPathsPromises = objectsToFind.map((object) => {
+    const allPathsPromises: Promise<Path>[] = objectsToFind.map((object) => {
       return this.getPathTo(object.i, object.j);
     });
 
-    const allPaths = await Promise.all(allPathsPromises);
+    const allPaths: Path[] = await Promise.all(allPathsPromises);
 
-    const shortestPath = allPaths.reduce((shortestPath: any, currentPath: any) => {
+    let indexShortestPath = 0;
+    const shortestPath = allPaths.reduce((shortestPath: any, currentPath: any, index: number) => {
       if (currentPath.length < shortestPath.length) {
+        indexShortestPath = index;
         return currentPath;
       }
 
       return shortestPath;
     }, allPaths[0]);
 
-    return shortestPath;
+    const object = objectsToFind[indexShortestPath];
+    
+    return { path: shortestPath, object: object, location: { x: object.i, y: object.j } };
   }
 }
