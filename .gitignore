@@ -7,3 +7,4 @@ original
 *.js
 src/2captcha
 2captcha
+2captcha/*
