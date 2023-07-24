@@ -24,7 +24,6 @@ export interface PathInformation {
   location: SquareLocale,
 }
 
-
 export default class PathHandler {
   private browserClient: BrowserClient;
 
@@ -44,24 +43,34 @@ export default class PathHandler {
 
   async findNearestObjectPath(objects: MapObject[], objectName: string): Promise<PathInformation> {
     const objectsToFind: MapObject[] = objects.filter((object) => object.name === objectName);
+    console.log("found", objectsToFind.length, " ", objectName);
 
     const allPathsPromises: Promise<Path>[] = objectsToFind.map((object) => {
       return this.getPathTo(object.i, object.j);
     });
-
     const allPaths: Path[] = await Promise.all(allPathsPromises);
+    
+    const notFilteredObjects: MapObject[] = [];
+    let nonEmptyPath = allPaths.filter((path, index) => {
+      if (path.length > 0) {
+        notFilteredObjects.push(objectsToFind[index]);
+        return true;
+      }
 
+      return false;
+    });
+    
     let indexShortestPath = 0;
-    const shortestPath = allPaths.reduce((shortestPath: any, currentPath: any, index: number) => {
+    const shortestPath = nonEmptyPath.reduce((shortestPath: any, currentPath: any, index: number) => {
       if (currentPath.length < shortestPath.length) {
         indexShortestPath = index;
         return currentPath;
       }
-
+      
       return shortestPath;
-    }, allPaths[0]);
-
-    const object = objectsToFind[indexShortestPath];
+    }, nonEmptyPath[0]);
+    
+    const object = notFilteredObjects[indexShortestPath];
     
     return { path: shortestPath, object: object, location: { x: object.i, y: object.j } };
   }

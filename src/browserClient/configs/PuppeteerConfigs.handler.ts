@@ -12,7 +12,7 @@ export default class PuppeteerConfigs {
   static setViewport = async (page: Page) => {
     await page.setViewport({
       width: 1520,
-      height: 420,
+      height: 620,
     });
   }
   

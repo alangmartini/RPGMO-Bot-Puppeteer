@@ -5,4 +5,5 @@ htmls
 original
 **/*.js
 *.js
-2captcha
+src/2captcha
+# 2captcha

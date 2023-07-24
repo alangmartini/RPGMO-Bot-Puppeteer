@@ -2,13 +2,18 @@ import BrowserClient from './browserClient/BrowserClient.client';
 import dotenv from 'dotenv';
 import GameBot from './gameBot/GameBot.client';
 import FirTreeBot from './gameBot/FirTreeBot.client';
+import CombatBot from './gameBot/CombatBot.client';
 
 dotenv.config({path: __dirname + '../.env'});
 
 export default class Orchestrator {
   private browserClient: BrowserClient;
-  private gameBot: GameBot;
-  private firTreeBot: FirTreeBot;
+  // private gameBot: GameBot;
+  // private firTreeBot: FirTreeBot;
+  private combatBot: CombatBot;
+
+
+
   // private statusHandler: StatusHandler;
   // private movementHandler: MovementHandler;
   // private playerHandler: PlayerHandler;
@@ -17,8 +22,9 @@ export default class Orchestrator {
     this.browserClient = new BrowserClient();
     const page = this.browserClient.getPage();
     
-    this.gameBot = new GameBot(this.browserClient);
-    this.firTreeBot = new FirTreeBot(this.browserClient);
+    // this.gameBot = new GameBot(this.browserClient);
+    // this.firTreeBot = new FirTreeBot(this.browserClient);
+    this.combatBot = new CombatBot(this.browserClient);
   }
 
   async init() {
@@ -27,8 +33,9 @@ export default class Orchestrator {
     await this.browserClient.goto('https://data.mo.ee/loader.html');
   
 
-    await this.firTreeBot.run();
+    // await this.firTreeBot.run();
     // await this.gameBot.login();
+    await this.combatBot.run();
 
     // await this.gameBot.runWatchers();
   }

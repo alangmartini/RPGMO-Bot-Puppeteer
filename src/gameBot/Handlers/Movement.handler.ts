@@ -59,6 +59,9 @@ export default class MovementHandler {
   }
 
   async decideDirectionToMove(nextSquare: SquareLocale, currentSquare: SquareLocale) {
+    // console.log("nextSquare", nextSquare);
+    // console.log("currentSquare", currentSquare);
+
     if (nextSquare.x > currentSquare.x) {
       await this.browserClient.sendKeyPress(ArrowKeys.ArrowRight);
       // await sleep(moveDelay);

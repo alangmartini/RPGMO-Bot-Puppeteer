@@ -17,7 +17,7 @@ export default class CaptchaHandler {
   private eventEmitter: EventEmitter;
   private previousCaptcha: string = '';
   private captchaDir: string = '';
-  private pythonScriptPath = "C:\\Users\\alanm\\OneDrive\\Documentos\\Projetos\\rpgmobot\\src\\2captcha\\main.py"
+  private pythonScriptPath = "C:\\Users\\alanm\\OneDrive\\Documentos\\Projetos\\rpgmobot\\2captcha\\main.py"
 
   constructor(browserClient: BrowserClient, eventEmitter: EventEmitter, pause: boolean, resume: boolean) {
     this.browserClient = browserClient;
@@ -34,7 +34,11 @@ export default class CaptchaHandler {
       console.log("Pausing all other activities");
       // this.eventEmitter.emit('pause');
       await this.downloadCaptcha();
-      await this.solveCaptcha();
+      try {
+        await this.solveCaptcha();
+      } catch (e) {
+        console.log("deu ruim", e);
+      }
 
       sleep(3000);
 
