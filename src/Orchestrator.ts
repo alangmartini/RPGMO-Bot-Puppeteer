@@ -22,8 +22,6 @@ export default class Orchestrator {
   async init() {
     await this.browserClient.init();
     await this.browserClient.config();
-    console.log('process.:', process.env);
-    console.log('process.env.GAME_URL is:', process.env.GAME_URL);
     await this.browserClient.goto(process.env.GAME_URL || '');
   
     await this.combatBot.run();

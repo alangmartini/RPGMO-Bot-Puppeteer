@@ -39,29 +39,18 @@ export default class PathFinderWithAStar extends GetPath {
     // If none of the surrounding points are walkable, return null
     return null;
   }
-
+  
+  calculateDistance(coord1: Coordinate, coord2: Coordinate): number {
+    const dx = coord2.x - coord1.x;
+    const dy = coord2.y - coord1.y;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+  
   async getPathTo(start: Coordinate, final: Coordinate): Promise<PathInformation> {
     const grid = await this.mapHandler.getMapAsGrid();
     const booleanGrid = grid.map((row) => row.map((square) => square ? true : false));
 
     const finalAjusted = this.getClosestWalkablePoint(final.x, final.y, booleanGrid) as Coordinate;
     return { path: aStar(start, finalAjusted, booleanGrid) as Nod[], location: final };
-  }
-
-  async getAllPathsMultiThread(objectsToFind: MapObject[], currentLocation: Coordinate): Promise<PathInformation[]> {
-    const grid = await this.mapHandler.getMapAsGrid();
-    const booleanGrid = grid.map((row) => row.map((square) => square ? true : false));
-
-    const objectsToFindOneCoordinateDeslocated = objectsToFind
-      .map((object) => this.getClosestWalkablePoint(object.i, object.j, booleanGrid) as any);
-
-    const allPathsPromises: Promise<Path>[] = (objectsToFindOneCoordinateDeslocated as any).map((object: any) => {
-      return aStar(currentLocation, { x: object.i, y: object.j }, booleanGrid);
-    });
-
-    const allPaths: Path[] = await Promise.all(allPathsPromises);
-    const allPathsWithLocations = allPaths.map((path, index) => ({ path, location: { x: objectsToFind[index].i, y: objectsToFind[index].j } }));
-    
-    return allPathsWithLocations;
   }
 }

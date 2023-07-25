@@ -3,9 +3,7 @@ import MapHandler from '../Map.handler';
 import MapObject from '../MapObject';
 import MovementHandler from '../Movement.handler';
 import { PathUtils } from './pathFinders/PathUtils';
-import Path from './interfaces/Path';
 import PathFinderWithAStar from './pathFinders/PathFinderWithAStar';
-import GetPath from './pathFinders/GetPath';
 import Coordinate from './interfaces/Coordinate';
 import PathInformation from './interfaces/PathInformation';
 
@@ -38,19 +36,20 @@ export default class PathHandler {
 
   async findNearestObjectPath(objectName: string): Promise<PathInformation> {
     const objectsToFind: MapObject[] = await this.mapHandler.getObjectsByName(objectName);
-
+    
     const currentLocation = await this.movementHandler.getCurrentPosition();
-  
-    console.time("getAllPathsMultiThread");
-    const allPaths: PathInformation[] = await this.pathFinder.getAllPathsMultiThread(objectsToFind, currentLocation);
-    console.timeEnd("getAllPathsMultiThread");
 
-    const { nonEmptyPaths, notFilteredObjects} = PathUtils.filterEmptyPaths(allPaths, objectsToFind);
-      
-    const { shortestPathInfo, indexShortestPathInfo } = PathUtils.findSmallestPath(nonEmptyPaths);
+    const distances = objectsToFind.map((object) => this
+      .pathFinder
+      .calculateDistance(currentLocation, { x: object.i, y: object.j }));
 
-    const closestObject = notFilteredObjects[indexShortestPathInfo];
+    // Get smallest distance
+    const indexSmallestDistance = distances.indexOf(Math.min(...distances));
+    const closestObject = objectsToFind[indexSmallestDistance];
 
-    return { path: shortestPathInfo.path, object: closestObject, location: shortestPathInfo.location };
+    const pathInfo = await this.pathFinder.getPathTo(currentLocation, { x: closestObject.i, y: closestObject.j });
+
+
+    return { path: pathInfo.path, location: { x: closestObject.i, y: closestObject.j } };
   }
 }

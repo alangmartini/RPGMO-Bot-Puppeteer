@@ -52,7 +52,7 @@ export default class MapHandler {
 
   async getObjectsByName(objectName: string): Promise<MapObject[]> {
     // Updates current map
-    this.scanMapDirect();
+    await this.scanMapDirect();
 
     // Returns all objects with the same name
     return this.currentMap.filter((object) => object.name === objectName);

@@ -4,7 +4,7 @@ import sleepRandom from '../utils/sleepRandom';
 import GameBot from './GameBot.client';
 import Coordinate from './Handlers/Path/interfaces/Coordinate';
 import Path from './Handlers/Path/interfaces/Path';
-import { PathInformation } from './Handlers/Path/interfaces/PathInformation';
+import PathInformation from './Handlers/Path/interfaces/PathInformation';
 
 
 const players: any = [];
@@ -27,24 +27,24 @@ export default class FirTreeBot extends GameBot {
   }
 
   async run () {
-    await this.login();
+    // await this.login();
 
-    // Start several subroutines
-    this.runWatchers();
+    // // Start several subroutines
+    // this.runWatchers();
 
-    await this.movementHandler.updateCurrentLocation();
+    // await this.movementHandler.updateCurrentLocation();
 
-    while (true) {
-      sleep(2000);
-      const pathToChest: Path = await this.getPathToChest(this.nearestChest) as Path;
-      await this.movementHandler.moveToDestination(pathToChest);
-      await this.movementHandler.interactWithObject(this.nearestChest, 'chest');
-      await this.inventoryHandler.stashChest();
+    // while (true) {
+    //   sleep(2000);
+    //   const pathToChest: Path = await this.getPathToChest(this.nearestChest) as Path;
+    //   await this.movementHandler.moveToDestination(pathToChest);
+    //   await this.movementHandler.interactWithObject(this.nearestChest, 'chest');
+    //   await this.inventoryHandler.stashChest();
   
-      const pathToFirTree: Path = await this.getPathToFirTree();
-      await this.movementHandler.moveToDestination(pathToFirTree);
-      await this.cutFirTree();
-    } 
+    //   const pathToFirTree: Path = await this.getPathToFirTree();
+    //   await this.movementHandler.moveToDestination(pathToFirTree);
+    //   await this.cutFirTree();
+    // } 
   }
 
   evalGetCurrentInventory() {
@@ -69,11 +69,11 @@ export default class FirTreeBot extends GameBot {
     }
   }
 
-  async getPathToFirTree() {
-    console.log("getting path to fir tree")
-    const path: Path = await this.pathHandler.findPathTo(this.movementHandler.currentLocation, this.nearestFirTree);
-    return path;
-  }
+  // async getPathToFirTree() {
+  //   console.log("getting path to fir tree")
+  //   const pathInfo: Path = await this.pathHandler.findPathTo(this.movementHandler.currentLocation, this.nearestFirTree);
+  //   return path;
+  // }
 
   async findNearestFirTreePath() {
     await this.mapHandler.scanMapDirect();
