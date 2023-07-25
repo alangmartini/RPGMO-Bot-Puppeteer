@@ -37,10 +37,10 @@ export default class FirTreeBot extends GameBot {
 
     while (true) {
       sleep(2000);
-      const pathToChest: Path = await this.getPathToChest();
+      const pathToChest: Path = await this.getPathToChest(this.nearestChest);
       await this.movementHandler.moveToDestination(pathToChest);
       await this.movementHandler.interactWithObject(this.nearestChest, 'chest');
-      await this.stashChest();
+      await this.inventoryHandler.stashChest();
   
       const pathToFirTree: Path = await this.getPathToFirTree();
       await this.movementHandler.moveToDestination(pathToFirTree);
@@ -70,27 +70,11 @@ export default class FirTreeBot extends GameBot {
     }
   }
 
-  evalStashChest() {
-    Chest.deposit_all();
-  }
-
-  async stashChest() {
-    console.log("stashing chest")
-    await this.browserClient.evaluateFunctionWithArgsAndReturn(this.evalStashChest);
-    await sleep(2000);
-  }
-
   async getPathToFirTree() {
     console.log("getting path to fir tree")
     const path: Path = await this.pathHandler.getPathTo(this.nearestFirTree.x,  this.nearestFirTree.y);
     return path;
   }
-
-  async getPathToChest() {{
-    console.log("getting path to chest")
-    const path: Path = await this.pathHandler.getPathTo(this.nearestChest.x,  this.nearestChest.y);
-    return path;
-  }}
 
   async findNearestFirTreePath() {
     await this.mapHandler.scanMapDirect();

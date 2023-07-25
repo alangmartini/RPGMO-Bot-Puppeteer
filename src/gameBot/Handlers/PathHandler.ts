@@ -1,5 +1,5 @@
 import BrowserClient from '../../browserClient/BrowserClient.client';
-import { MapObject } from './Map.handler';
+import MapHandler, { MapObject } from './Map.handler';
 
 
 const players: any = [];
@@ -26,9 +26,11 @@ export interface PathInformation {
 
 export default class PathHandler {
   private browserClient: BrowserClient;
+  mapHandler: MapHandler;
 
-  constructor(browserClient: BrowserClient) {
+  constructor(browserClient: BrowserClient, mapHandler: MapHandler) {
     this.browserClient = browserClient;
+    this.mapHandler = mapHandler;
   }
 
   evalGetPathTo(x: number, y: number) {
@@ -43,7 +45,6 @@ export default class PathHandler {
 
   async findNearestObjectPath(objects: MapObject[], objectName: string): Promise<PathInformation> {
     const objectsToFind: MapObject[] = objects.filter((object) => object.name === objectName);
-    console.log("found", objectsToFind.length, " ", objectName);
 
     const allPathsPromises: Promise<Path>[] = objectsToFind.map((object) => {
       return this.getPathTo(object.i, object.j);
@@ -73,5 +74,12 @@ export default class PathHandler {
     const object = notFilteredObjects[indexShortestPath];
     
     return { path: shortestPath, object: object, location: { x: object.i, y: object.j } };
+  }
+  
+  async getPathToNearestMob(name: string) {
+    await this.mapHandler.scanMapDirect();
+    const path: PathInformation = await this.findNearestObjectPath(this.mapHandler.currentMap, name);
+    
+    return path;
   }
 }

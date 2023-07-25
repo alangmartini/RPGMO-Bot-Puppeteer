@@ -34,6 +34,7 @@ export interface MapObject {
 export default class MapHandler {
   private browserClient: BrowserClient;
   public currentMap: MapObject[] = [];
+  public mapAsGrid = [[]];
 
   constructor(browserClient: BrowserClient) {
     this.browserClient = browserClient;
@@ -56,5 +57,13 @@ export default class MapHandler {
     const map: MapObject[] = await this.browserClient.evaluateFunctionWithArgsAndReturn(this.evalGetCurrentMapDirect);
 
     this.currentMap = map;
+  }
+
+  evalGetMapAsGrid() {
+    return on_map[current_map];
+  }
+
+  async scanMapAsGrid() {
+    this.mapAsGrid = await this.browserClient.evaluateFunctionWithArgsAndReturn(this.evalGetMapAsGrid);    
   }
 }

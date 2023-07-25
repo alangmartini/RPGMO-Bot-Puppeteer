@@ -1,4 +1,5 @@
 import BrowserClient from '../browserClient/BrowserClient.client';
+import { aStar, Coordinate, Nod } from '../utils/AStart';
 import sleep from '../utils/sleep';
 import sleepRandom from '../utils/sleepRandom';
 import GameBot from './GameBot.client';
@@ -7,23 +8,14 @@ import { Path, PathInformation, SquareLocale } from './Handlers/PathHandler';
 import ArrowKeys from './enums/ArrowKeys.enum';
 
 const players: any = [];
-const Chest = {
-  deposit_all: () => {}
-}
-
-const Inventory = {
-  is_full: (player: any) => {}
-}
 
 
 
 export default class CombatBot extends GameBot {
-  private nearestChest: SquareLocale = { x: 22, y: 17 };
-  private movementHandler: MovementHandler;
+  private nearestChest: SquareLocale = { x: 21, y: 17 };
 
   constructor(browserClient: BrowserClient) {
     super(browserClient);
-    this.movementHandler = new MovementHandler(browserClient);
   }
 
   async run () {
@@ -33,60 +25,65 @@ export default class CombatBot extends GameBot {
     this.runWatchers();
 
     
+    await sleep(5000);
+
+    // await this.movementHandler.updateCurrentLocation()
+    // const current = this.movementHandler.currentLocation;
+    // const start = new Nod(current.x, current.y);
+    // const goal = new Nod(this.nearestChest.x, this.nearestChest.y);
+
+    // await this.mapHandler.scanMapAsGrid();
+    // const grid = this.mapHandler.mapAsGrid;
+
+    // console.log("to aqui");
+    // console.time('aStar')
+    // console.log('start is:', start);
+    // console.log('goal is:', goal);
+    // const pat = aStar(start, goal, grid);
+    // console.timeEnd('aStar')
+
+    // console.log("pat is", pat)
     while (true) {
-      // sleep(2000);
-      await sleep(5000);
+      sleep(300);
       try {
         await this.mapHandler.scanMapDirect();
-        const pathj = await this.findNearestMob('Gray Wizard');
-        // console.log("pathj", pathj);
-        console.log("pathj.path", pathj.path);
-        console.log("pathj.location", pathj.location);
-        
+        const pathj = await this.pathHandler.getPathToNearestMob('Gray Wizard');
+    
         await this.movementHandler.moveToDestination(pathj.path);
         await this.movementHandler.interactWithObject(pathj.location, 'Mago cinzento');
-  
-        const isFull = await this.checkInventoryIsFull();
+        
+        sleep(1000)
+        let isBusy = true;
+
+        while (isBusy) {
+          await sleep(200);
+          isBusy = await this.checkIsBusy();
+          console.log('isBusy is:', isBusy);
+        }
+
+        let isFull = await this.inventoryHandler.checkInventoryIsFull();
+        console.log('isFull is:', isFull);
+
   
         if (isFull) {
-          const pathToChest: Path = await this.getPathToChest();
-          await this.stashChest();
+          const pathToChest: Path = await this.getPathToChest(this.nearestChest);
+          await this.inventoryHandler.stashChest();
         } 
 
-      } catch {}
+      } catch (e){
+        console.log("error on main loop", e)
+      }
     } 
   }
-
-  evalGetCurrentInventory() {
-    return Inventory.is_full(players[0]);
+ 
+  evalCheckIsBusy() {
+    return players[0].temp.busy;
   }
 
-  async checkInventoryIsFull() {
-    const inventoryIsFull: boolean = await this.browserClient.evaluateFunctionWithArgsAndReturn(this.evalGetCurrentInventory);
+  async checkIsBusy() {
+    const isBusy: boolean = await this.browserClient.evaluateFunctionWithArgsAndReturn(this.evalCheckIsBusy);
 
-    return inventoryIsFull;
+    return isBusy;
   }
 
-  evalStashChest() {
-    Chest.deposit_all();
-  }
-
-  async stashChest() {
-    console.log("stashing chest")
-    await this.browserClient.evaluateFunctionWithArgsAndReturn(this.evalStashChest);
-    await sleep(2000);
-  }
-
-  async getPathToChest() {{
-    console.log("getting path to chest")
-    const path: Path = await this.pathHandler.getPathTo(this.nearestChest.x,  this.nearestChest.y);
-    return path;
-  }}
-
-  async findNearestMob(name: string) {
-    await this.mapHandler.scanMapDirect();
-    const path: PathInformation = await this.pathHandler.findNearestObjectPath(this.mapHandler.currentMap, name);
-    
-    return path;
-  }
 }

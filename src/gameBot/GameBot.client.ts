@@ -7,9 +7,11 @@ import InjectionHandler from './Handlers/Injection.handler';
 import CaptchaHandler from './Handlers/Captcha.handler';
 import { EventEmitter } from 'events';
 import MapHandler from './Handlers/Map.handler';
-import PathHandler from './Handlers/PathHandler';
+import PathHandler, { Path, SquareLocale } from './Handlers/PathHandler';
 import sleep from '../utils/sleep';
 import Watcher from './Watchers/Watcher.watcher';
+import InventoryHandler from './Handlers/Inventory.handler';
+import MovementHandler from './Handlers/Movement.handler';
 
 dotenv.config();
 
@@ -24,14 +26,10 @@ class GameBot {
   protected captchaHandler: CaptchaHandler;
   protected mapHandler: MapHandler;
   protected pathHandler: PathHandler;
-
-  // Watchers tasks will watch for these vars
-  // to know when to pause or start again
-  protected pause: boolean = false;
-  protected resume: boolean = false;
+  protected inventoryHandler: InventoryHandler;
+  protected movementHandler: MovementHandler;
 
   // A watcher is a loop that checks for something.
-  protected watchers: Array<Promise<void>> = [];
   private captchaWatcher: Watcher;
 
   // EventEmitter to handle events
@@ -39,26 +37,21 @@ class GameBot {
 
   constructor(browserClient: BrowserClient) {
     this.eventEmitter = new EventEmitter();
-    this.eventEmitter.on('pause', () => this.pause = true);
-    this.eventEmitter.on('resume', () => {
-      this.pause = false;
-      this.runWatchers();
-    });
-
     this.browserClient = browserClient;
 
     // Independent handlers
     this.pageHandler = new PageHandler(this.browserClient);
     this.injectionHandler = new InjectionHandler(this.browserClient);
-    this.pathHandler = new PathHandler(this.browserClient);
+    this.inventoryHandler = new InventoryHandler(this.browserClient);
+    this.mapHandler = new MapHandler(this.browserClient);
+    this.movementHandler = new MovementHandler(browserClient);
     
     // Dependent handlers
     this.loginHandler = new LoginHandler(this.browserClient, this.pageHandler);
-    this.captchaHandler = new CaptchaHandler(this.browserClient, this.eventEmitter, this.pause, this.resume);
-    this.mapHandler = new MapHandler(this.browserClient);
+    this.captchaHandler = new CaptchaHandler(this.browserClient, this.eventEmitter);
+    this.pathHandler = new PathHandler(this.browserClient, this.mapHandler);
 
     // Watchers
-
     this.captchaWatcher = new Watcher(
         this.eventEmitter,
         'captcha',
@@ -81,19 +74,6 @@ class GameBot {
 
   async runWatchers() {
     this.captchaWatcher.run();
-    // this.watchers = [this.watchCaptcha(), this.watchMap()];
-    // await Promise.all(this.watchers);
-  }
-
-  async watchCaptcha() {
-    while (!this.pause) {
-      await this.captchaHandler.checkForCaptcha();
-      await new Promise(r => setTimeout(r, 5000));
-    }
-
-    // await sleep(600000);
-
-    // this.eventEmitter.emit('resume');
   }
 
   async watchMap() {
@@ -101,8 +81,28 @@ class GameBot {
       await this.mapHandler.scanMapDirect();
       await new Promise(r => setTimeout(r, 20000));
     }
+  }
 
-    // this.eventEmitter.emit('resume');
+  async getPathToChest(nearestChest: SquareLocale) {
+    await this.movementHandler.updateCurrentLocation()
+    const current = this.movementHandler.currentLocation;
+    const start = new Nod(current.x, current.y);
+    const goal = new Nod(this.nearestChest.x, this.nearestChest.y);
+
+    await this.mapHandler.scanMapAsGrid();
+    const grid = this.mapHandler.mapAsGrid;
+
+    console.log("to aqui");
+    console.time('aStar')
+    console.log('start is:', start);
+    console.log('goal is:', goal);
+    const pat = aStar(start, goal, grid);
+    console.timeEnd('aStar')
+
+    console.log("pat is", pat)
+    console.log("getting path to chest")
+    const path: Path = await this.pathHandler.getPathTo(nearestChest.x,  nearestChest.y);
+    return path;
   }
 }
 

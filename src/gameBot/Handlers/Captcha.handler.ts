@@ -17,9 +17,9 @@ export default class CaptchaHandler {
   private eventEmitter: EventEmitter;
   private previousCaptcha: string = '';
   private captchaDir: string = '';
-  private pythonScriptPath = "C:\\Users\\alanm\\OneDrive\\Documentos\\Projetos\\rpgmobot\\2captcha\\main.py"
+  private pythonScriptPath = "C:\\Users\\alanm\\OneDrive\\Documentos\\Projetos\\rpgmobot\\src\\2captcha\\main.py"
 
-  constructor(browserClient: BrowserClient, eventEmitter: EventEmitter, pause: boolean, resume: boolean) {
+  constructor(browserClient: BrowserClient, eventEmitter: EventEmitter) {
     this.browserClient = browserClient;
     this.eventEmitter = eventEmitter;
   }
@@ -32,7 +32,7 @@ export default class CaptchaHandler {
     if (isCaptchaActive) {
       console.log("Found captcha")
       console.log("Pausing all other activities");
-      // this.eventEmitter.emit('pause');
+      this.eventEmitter.emit('pause');
       await this.downloadCaptcha();
       try {
         await this.solveCaptcha();
@@ -94,8 +94,6 @@ export default class CaptchaHandler {
       await this.browserClient.getPage()!.waitForSelector('[onclick="Captcha.submit();"]');
 
       console.log("trying to submit")
-      // Click the submit button
-      await this.browserClient.getPage()!.click('#captcha_submit');
       await this.browserClient.getPage()!.click('[onclick="Captcha.submit();"]');
     } catch (e) {
       console.log("deu ruim", e)
@@ -105,12 +103,17 @@ export default class CaptchaHandler {
   async getCaptchaResult() {
     try {
       console.log("trying to exec python script")
+      console.log('this.pythonScriptPath is:', this.pythonScriptPath);
+      console.log('this.captchaDir is:', this.captchaDir);
+
       const { stdout, stderr } = await exec(`python ${this.pythonScriptPath} ${this.captchaDir}`);
 
       console.log('stdout is:', stdout);
       console.log('stderr:', stderr);
 
       return stdout.trim();
-    } catch {}
+    } catch (e){
+      console.log("something went wrong", e)
+    }
   }
 }
