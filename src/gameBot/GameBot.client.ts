@@ -6,7 +6,7 @@ import InjectionHandler from './Handlers/Injection.handler';
 import CaptchaHandler from './Handlers/Captcha.handler';
 import { EventEmitter } from 'events';
 import MapHandler from './Handlers/Map.handler';
-import PathHandler from './Handlers/Path/PathHandler';
+import PathHandler from './Handlers/Path/Path.handler';
 import { Path } from './Handlers/Path/interfaces/Path';
 import { SquareLocale } from './Handlers/Path/SquareLocale';
 import Watcher from './Watchers/Watcher.watcher';

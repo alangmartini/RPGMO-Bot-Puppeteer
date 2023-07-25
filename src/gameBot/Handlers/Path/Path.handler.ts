@@ -1,5 +1,6 @@
 import BrowserClient from '../../../browserClient/BrowserClient.client';
-import MapHandler, { MapObject } from '../Map.handler';
+import MapHandler from '../Map.handler';
+import MapObject from '../MapObject';
 import Path from './interfaces/Path';
 import { PathInformation } from './interfaces/PathInformation';
 import RawPath from './interfaces/RawPath';

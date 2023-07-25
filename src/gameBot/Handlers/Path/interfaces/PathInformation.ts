@@ -1,7 +1,6 @@
-import { MapObject } from '../Map.handler';
-import { Path } from './Path';
-import { SquareLocale } from './SquareLocale';
-
+import MapObject from '../../MapObject';
+import Path from './Path';
+import SquareLocale from './SquareLocale';
 
 export interface PathInformation {
   path: Path;

@@ -1,4 +1,4 @@
-import Nod from '../Nod';
+import Nod from './Nod';
 import SquareLocale from './SquareLocale';
 
 type Path = SquareLocale[] | Nod[];

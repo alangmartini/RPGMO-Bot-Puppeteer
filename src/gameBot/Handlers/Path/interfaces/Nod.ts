@@ -1,5 +1,6 @@
+import Coordinate from './Coordinate';
 
-export default class Nod {
+export default class Nod implements Coordinate {
     x: number;
     y: number;
     f: number;
