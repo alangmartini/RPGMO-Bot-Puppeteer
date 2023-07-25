@@ -1,6 +1,5 @@
-import BrowserClient from '../../browserClient/BrowserClient.client';
-import MapHandler, { MapObject } from './Map.handler';
-
+import { Nod } from './AStar';
+import { MapObject } from '../Map.handler';
 
 const players: any = [];
 const findPathFromTo = (a: any, b: any, c: any) => {}
@@ -16,7 +15,7 @@ export interface RawSquareLocale {
 }
 
 export type RawPath = RawSquareLocale[];
-export type Path = SquareLocale[];
+export type Path = SquareLocale[] | Nod[];
 
 export interface PathInformation {
   path: Path,

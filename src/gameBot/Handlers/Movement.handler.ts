@@ -1,7 +1,7 @@
 import BrowserClient from '../../browserClient/BrowserClient.client';
 import sleep from '../../utils/sleep';
 import ArrowKeys from '../enums/ArrowKeys.enum';
-import { Path, SquareLocale } from './PathHandler';
+import { Path, SquareLocale } from './Path/PathHandler';
 
 const players: any = [];
 const movementInProgress = (player: any) => {}
@@ -38,18 +38,23 @@ export default class MovementHandler {
   }
 
   async moveToDestination(path: Path) {
+    console.log("Starting to move to destination")
     const pathLength = path.length;
+    console.log('pathLength is:', pathLength);
+    
 
     for (let i = 0; i < pathLength; i++) {
       await this.updateCurrentLocation();
 
       // In Path, the last SquareLocale is the nearest.
       const nextSquare = path[pathLength - 1 -i];
+      console.log('nextSquare is:', nextSquare);
 
       // console.log("next square is", nextSquare);
       // console.log("current pos is", this.currentLocation);
 
       while (nextSquare.x !== this.currentLocation.x || nextSquare.y !== this.currentLocation.y) {
+        console.log(".")
         await this.decideDirectionToMove(nextSquare, this.currentLocation);
         await this.updateCurrentLocation();
       }
@@ -61,10 +66,10 @@ export default class MovementHandler {
   async decideDirectionToMove(nextSquare: SquareLocale, currentSquare: SquareLocale) {
     // console.log("nextSquare", nextSquare);
     // console.log("currentSquare", currentSquare);
-
+    // sleep(500)
     if (nextSquare.x > currentSquare.x) {
       await this.browserClient.sendKeyPress(ArrowKeys.ArrowRight);
-      // await sleep(moveDelay);
+      // console.log("sending key")      
       await this.waitStopMoving();
 
       return;
@@ -72,24 +77,21 @@ export default class MovementHandler {
 
     if (nextSquare.x < currentSquare.x) {
       await this.browserClient.sendKeyPress(ArrowKeys.ArrowLeft);
-      // await sleep(moveDelay);
-
+      // console.log("sending key")
       await this.waitStopMoving();
       return;
     }
 
     if (nextSquare.y > currentSquare.y) {
       await this.browserClient.sendKeyPress(ArrowKeys.ArrowUp);
-      // await sleep(moveDelay);
-
+      // console.log("sending key")
       await this.waitStopMoving();
       return;
     }
 
     if (nextSquare.y < currentSquare.y) {
       await this.browserClient.sendKeyPress(ArrowKeys.ArrowDown);
-      // await sleep(moveDelay);
-
+      // console.log("sending key")
       await this.waitStopMoving();
       return;
     }

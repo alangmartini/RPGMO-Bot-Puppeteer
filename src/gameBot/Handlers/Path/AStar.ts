@@ -58,7 +58,8 @@ export function aStar(start: Coordinate, end: Coordinate, grid: boolean[][]): No
                 current = current.parent;
             }
 
-            return path.reverse();
+            return path;
+            // return path.reverse();
         }
 
         // Generate children

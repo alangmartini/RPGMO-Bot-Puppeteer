@@ -1,19 +1,17 @@
 import BrowserClient from '../browserClient/BrowserClient.client';
 import RpgMOSelectors from './enums/RpgMOSelectors.enum';
-import dotenv from 'dotenv';
 import PageHandler from './Handlers/Page.handler';
 import LoginHandler from './Handlers/Login.handler';
 import InjectionHandler from './Handlers/Injection.handler';
 import CaptchaHandler from './Handlers/Captcha.handler';
 import { EventEmitter } from 'events';
 import MapHandler from './Handlers/Map.handler';
-import PathHandler, { Path, SquareLocale } from './Handlers/PathHandler';
-import sleep from '../utils/sleep';
+import PathHandler, { Path, SquareLocale } from './Handlers/Path/PathHandler';
 import Watcher from './Watchers/Watcher.watcher';
 import InventoryHandler from './Handlers/Inventory.handler';
 import MovementHandler from './Handlers/Movement.handler';
+import { Nod, aStar } from './Handlers/Path/AStar';
 
-dotenv.config();
 
 class GameBot {
   // BrowserClient handles all operations with Chromium
@@ -76,33 +74,29 @@ class GameBot {
     this.captchaWatcher.run();
   }
 
-  async watchMap() {
-    while (!this.pause) {
-      await this.mapHandler.scanMapDirect();
-      await new Promise(r => setTimeout(r, 20000));
-    }
-  }
-
   async getPathToChest(nearestChest: SquareLocale) {
     await this.movementHandler.updateCurrentLocation()
     const current = this.movementHandler.currentLocation;
+
+
+
     const start = new Nod(current.x, current.y);
-    const goal = new Nod(this.nearestChest.x, this.nearestChest.y);
+    const goal = new Nod(nearestChest.x, nearestChest.y);
 
     await this.mapHandler.scanMapAsGrid();
     const grid = this.mapHandler.mapAsGrid;
 
-    console.log("to aqui");
     console.time('aStar')
     console.log('start is:', start);
     console.log('goal is:', goal);
-    const pat = aStar(start, goal, grid);
+    const path = aStar(start, goal, grid);
     console.timeEnd('aStar')
 
-    console.log("pat is", pat)
-    console.log("getting path to chest")
-    const path: Path = await this.pathHandler.getPathTo(nearestChest.x,  nearestChest.y);
-    return path;
+    console.log("path length isFinite", path?.length)
+    return path?.map((nod) => ({ x: nod.x, y: nod.y } as SquareLocale));
+
+    // const path: Path = await this.pathHandler.getPathTo(nearestChest.x,  nearestChest.y);
+    // return path;
   }
 }
 

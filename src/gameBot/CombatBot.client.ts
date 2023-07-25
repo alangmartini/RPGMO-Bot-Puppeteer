@@ -1,10 +1,10 @@
 import BrowserClient from '../browserClient/BrowserClient.client';
-import { aStar, Coordinate, Nod } from '../utils/AStart';
+import { aStar, Coordinate, Nod } from './Handlers/Path/AStar';
 import sleep from '../utils/sleep';
 import sleepRandom from '../utils/sleepRandom';
 import GameBot from './GameBot.client';
 import MovementHandler from './Handlers/Movement.handler';
-import { Path, PathInformation, SquareLocale } from './Handlers/PathHandler';
+import { Path, PathInformation, SquareLocale } from './Handlers/Path/PathHandler';
 import ArrowKeys from './enums/ArrowKeys.enum';
 
 const players: any = [];
@@ -46,6 +46,17 @@ export default class CombatBot extends GameBot {
     while (true) {
       sleep(300);
       try {
+        let isFull = await this.inventoryHandler.checkInventoryIsFull();
+        console.log('isFull is:', isFull);
+
+  
+        if (isFull) {
+          const pathToChest: Path = await this.getPaathToChest(this.nearestChest) as Path;
+          await this.movementHandler.moveToDestination(pathToChest);
+          await this.movementHandler.interactWithObject(this.nearestChest, 'Chest');
+          await this.inventoryHandler.stashChest();
+        } 
+
         await this.mapHandler.scanMapDirect();
         const pathj = await this.pathHandler.getPathToNearestMob('Gray Wizard');
     
@@ -60,16 +71,6 @@ export default class CombatBot extends GameBot {
           isBusy = await this.checkIsBusy();
           console.log('isBusy is:', isBusy);
         }
-
-        let isFull = await this.inventoryHandler.checkInventoryIsFull();
-        console.log('isFull is:', isFull);
-
-  
-        if (isFull) {
-          const pathToChest: Path = await this.getPathToChest(this.nearestChest);
-          await this.inventoryHandler.stashChest();
-        } 
-
       } catch (e){
         console.log("error on main loop", e)
       }

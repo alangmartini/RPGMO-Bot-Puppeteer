@@ -3,7 +3,7 @@ import sleep from '../utils/sleep';
 import sleepRandom from '../utils/sleepRandom';
 import GameBot from './GameBot.client';
 import MovementHandler from './Handlers/Movement.handler';
-import { Path, PathInformation, SquareLocale } from './Handlers/PathHandler';
+import { Path, PathInformation, SquareLocale } from './Handlers/Path/PathHandler';
 import ArrowKeys from './enums/ArrowKeys.enum';
 
 const players: any = [];
@@ -20,11 +20,9 @@ const Inventory = {
 export default class FirTreeBot extends GameBot {
   private nearestFirTree: SquareLocale = { x: 88, y: 32 };
   private nearestChest: SquareLocale = { x: 83, y: 38 };
-  private movementHandler: MovementHandler;
 
   constructor(browserClient: BrowserClient) {
     super(browserClient);
-    this.movementHandler = new MovementHandler(browserClient);
   }
 
   async run () {
@@ -37,7 +35,7 @@ export default class FirTreeBot extends GameBot {
 
     while (true) {
       sleep(2000);
-      const pathToChest: Path = await this.getPathToChest(this.nearestChest);
+      const pathToChest: Path = await this.getPathToChest(this.nearestChest) as Path;
       await this.movementHandler.moveToDestination(pathToChest);
       await this.movementHandler.interactWithObject(this.nearestChest, 'chest');
       await this.inventoryHandler.stashChest();
