@@ -1,8 +1,7 @@
-import Coordinate from './interfaces/Coordinate';
-import Nod from './interfaces/Nod';
+import Coordinate from '../interfaces/Coordinate';
+import Nod from '../interfaces/Nod';
 
 export function aStar(start: Coordinate, end: Coordinate, grid: boolean[][]): Nod[] | null {
-    console.log("começando")
     // Create start and end nod
     let startNod = new Nod(start.x, start.y);
     let endNod = new Nod(end.x, end.y);

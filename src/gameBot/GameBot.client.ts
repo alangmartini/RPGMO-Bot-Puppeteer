@@ -10,9 +10,10 @@ import PathHandler from './Handlers/Path/Path.handler';
 import Watcher from './Watchers/Watcher.watcher';
 import InventoryHandler from './Handlers/Inventory.handler';
 import MovementHandler from './Handlers/Movement.handler';
-import { aStar } from './Handlers/Path/AStar';
+import { aStar } from './Handlers/Path/pathFinders/AStar';
 import Nod from './Handlers/Path/interfaces/Nod';
 import SquareLocale from './Handlers/Path/interfaces/SquareLocale';
+import PathInformation from './Handlers/Path/interfaces/PathInformation';
 
 
 class GameBot {
@@ -76,29 +77,10 @@ class GameBot {
     this.captchaWatcher.run();
   }
 
-  async getPathToChest(nearestChest: SquareLocale) {
+  async getPathToChest(nearestChest: SquareLocale): Promise<PathInformation> {
     await this.movementHandler.updateCurrentLocation()
     const current = this.movementHandler.currentLocation;
-
-
-
-    const start = new Nod(current.x, current.y);
-    const goal = new Nod(nearestChest.x, nearestChest.y);
-
-    await this.mapHandler.scanMapAsGrid();
-    const grid = this.mapHandler.mapAsGrid;
-
-    console.time('aStar')
-    console.log('start is:', start);
-    console.log('goal is:', goal);
-    const path = aStar(start, goal, grid);
-    console.timeEnd('aStar')
-
-    console.log("path length isFinite", path?.length)
-    return path?.map((nod) => ({ x: nod.x, y: nod.y } as SquareLocale));
-
-    // const path: Path = await this.pathHandler.getPathTo(nearestChest.x,  nearestChest.y);
-    // return path;
+    return await this.pathHandler.findPathTo(current, nearestChest);
   }
 }
 

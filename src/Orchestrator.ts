@@ -4,7 +4,7 @@ import GameBot from './gameBot/GameBot.client';
 import FirTreeBot from './gameBot/FirTreeBot.client';
 import CombatBot from './gameBot/CombatBot.client';
 
-dotenv.config({path: __dirname + '../.env'});
+dotenv.config();
 
 export default class Orchestrator {
   private browserClient: BrowserClient;
@@ -22,6 +22,8 @@ export default class Orchestrator {
   async init() {
     await this.browserClient.init();
     await this.browserClient.config();
+    console.log('process.:', process.env);
+    console.log('process.env.GAME_URL is:', process.env.GAME_URL);
     await this.browserClient.goto(process.env.GAME_URL || '');
   
     await this.combatBot.run();

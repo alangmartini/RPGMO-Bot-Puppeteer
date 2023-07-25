@@ -2,12 +2,12 @@ import BrowserClient from '../../../browserClient/BrowserClient.client';
 import MapHandler from '../Map.handler';
 import MapObject from '../MapObject';
 import MovementHandler from '../Movement.handler';
-import { PathUtils } from './PathUtils';
+import { PathUtils } from './pathFinders/PathUtils';
 import Path from './interfaces/Path';
-import { PathInformation } from './interfaces/PathInformation';
 import PathFinderWithAStar from './pathFinders/PathFinderWithAStar';
 import GetPath from './pathFinders/GetPath';
 import Coordinate from './interfaces/Coordinate';
+import PathInformation from './interfaces/PathInformation';
 
 const players: any = [];
 const findPathFromTo = (a: any, b: any, c: any) => {}
@@ -23,7 +23,7 @@ export default class PathHandler {
   private browserClient: BrowserClient;
   mapHandler: MapHandler;
   private movementHandler: MovementHandler;
-  private pathFinder: GetPath;
+  private pathFinder: PathFinderWithAStar;
 
   constructor(browserClient: BrowserClient, mapHandler: MapHandler, movementHandler: MovementHandler) {
     this.browserClient = browserClient;
@@ -32,7 +32,7 @@ export default class PathHandler {
     this.pathFinder = new PathFinderWithAStar(this.mapHandler);
   }
 
-  async findPathTo(initial: Coordinate, final: Coordinate) {
+  async findPathTo(initial: Coordinate, final: Coordinate): Promise<PathInformation> {
     return await this.pathFinder.getPathTo(initial, final);
   }
 
@@ -42,15 +42,15 @@ export default class PathHandler {
     const currentLocation = await this.movementHandler.getCurrentPosition();
   
     console.time("getAllPathsMultiThread");
-    const allPaths: Path[] = await this.pathFinder.getAllPathsMultiThread(objectsToFind, currentLocation);
+    const allPaths: PathInformation[] = await this.pathFinder.getAllPathsMultiThread(objectsToFind, currentLocation);
     console.timeEnd("getAllPathsMultiThread");
 
     const { nonEmptyPaths, notFilteredObjects} = PathUtils.filterEmptyPaths(allPaths, objectsToFind);
       
-    const { shortestPath, indexShortestPath } = PathUtils.findSmallestPath(nonEmptyPaths);
+    const { shortestPathInfo, indexShortestPathInfo } = PathUtils.findSmallestPath(nonEmptyPaths);
 
-    const closestObject = notFilteredObjects[indexShortestPath];
+    const closestObject = notFilteredObjects[indexShortestPathInfo];
 
-    return { path: shortestPath, object: closestObject, location: { x: closestObject.i, y: closestObject.j } };
+    return { path: shortestPathInfo.path, object: closestObject, location: shortestPathInfo.location };
   }
 }

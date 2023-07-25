@@ -2,6 +2,7 @@ import BrowserClient from '../browserClient/BrowserClient.client';
 import sleep from '../utils/sleep';
 import GameBot from './GameBot.client';
 import Path from './Handlers/Path/interfaces/Path';
+import PathInformation from './Handlers/Path/interfaces/PathInformation';
 import SquareLocale from './Handlers/Path/interfaces/SquareLocale';
 
 const players: any = [];
@@ -39,32 +40,34 @@ export default class CombatBot extends GameBot {
     // console.log("pat is", pat)
     const MOB_TO_FIGHT = 'Gray Wizard'
     while (true) {
-      sleep(300);
+      sleep(5000);
       try {
         let isFull = await this.inventoryHandler.checkInventoryIsFull();
         console.log('isFull is:', isFull);
   
         if (isFull) {
-          const pathToChest: Path = await this.getPathToChest(this.nearestChest) as Path;
-          await this.movementHandler.moveToDestination(pathToChest);
-          await this.movementHandler.interactWithObject(this.nearestChest, 'Chest');
+          const chestPathInfo: PathInformation = await this.getPathToChest(this.nearestChest);
+          console.log('pathToChest is:', chestPathInfo.path);
+          console.log("chest location is", chestPathInfo.location)
+          await this.movementHandler.moveToDestination(chestPathInfo.path);
+          await this.movementHandler.interactWithObject(chestPathInfo.location, 'Chest');
           await this.inventoryHandler.stashChest();
         } 
 
-        await this.mapHandler.scanMapDirect();
-        const pathj = await this.pathHandler.findNearestObjectPath(MOB_TO_FIGHT);
+        // await this.mapHandler.scanMapDirect();
+        // const pathj = await this.pathHandler.findNearestObjectPath(MOB_TO_FIGHT);
     
-        await this.movementHandler.moveToDestination(pathj.path);
-        await this.movementHandler.interactWithObject(pathj.location, MOB_TO_FIGHT);
+        // await this.movementHandler.moveToDestination(pathj.path);
+        // await this.movementHandler.interactWithObject(pathj.location, MOB_TO_FIGHT);
         
-        sleep(1000);
-        let isBusy = true;
+        // sleep(1000);
+        // let isBusy = true;
 
-        while (isBusy) {
-          await sleep(200);
-          isBusy = await this.checkIsBusy();
-          console.log('isBusy is:', isBusy);
-        }
+        // while (isBusy) {
+        //   await sleep(200);
+        //   isBusy = await this.checkIsBusy();
+        //   console.log('isBusy is:', isBusy);
+        // }
       } catch (e){
         console.log("error on main loop", e)
       }

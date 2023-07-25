@@ -1,9 +1,18 @@
 import MapObject from '../../MapObject';
+import Coordinate from './Coordinate';
 import Path from './Path';
-import SquareLocale from './SquareLocale';
 
-export interface PathInformation {
+export interface PathObjectAndLocation {
   path: Path;
   object: MapObject;
-  location: SquareLocale;
+  location: Coordinate;
 }
+
+export interface PathAndLocation {
+  path: Path;
+  location: Coordinate;
+}
+
+type PathInformation = PathObjectAndLocation | PathAndLocation;
+
+export default PathInformation;
