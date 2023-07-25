@@ -2,11 +2,10 @@ import BrowserClient from '../browserClient/BrowserClient.client';
 import sleep from '../utils/sleep';
 import sleepRandom from '../utils/sleepRandom';
 import GameBot from './GameBot.client';
-import MovementHandler from './Handlers/Movement.handler';
-import { Path } from './Handlers/Path/interfaces/Path';
-import { SquareLocale } from './Handlers/Path/SquareLocale';
-import { PathInformation } from './Handlers/Path/PathInformation';
-import ArrowKeys from './enums/ArrowKeys.enum';
+import Coordinate from './Handlers/Path/interfaces/Coordinate';
+import Path from './Handlers/Path/interfaces/Path';
+import { PathInformation } from './Handlers/Path/interfaces/PathInformation';
+
 
 const players: any = [];
 const Chest = {
@@ -20,8 +19,8 @@ const Inventory = {
 
 
 export default class FirTreeBot extends GameBot {
-  private nearestFirTree: SquareLocale = { x: 88, y: 32 };
-  private nearestChest: SquareLocale = { x: 83, y: 38 };
+  private nearestFirTree: Coordinate = { x: 88, y: 32 };
+  private nearestChest: Coordinate = { x: 83, y: 38 };
 
   constructor(browserClient: BrowserClient) {
     super(browserClient);
@@ -72,13 +71,13 @@ export default class FirTreeBot extends GameBot {
 
   async getPathToFirTree() {
     console.log("getting path to fir tree")
-    const path: Path = await this.pathHandler.getPathTo(this.nearestFirTree.x,  this.nearestFirTree.y);
+    const path: Path = await this.pathHandler.findPathTo(this.movementHandler.currentLocation, this.nearestFirTree);
     return path;
   }
 
   async findNearestFirTreePath() {
     await this.mapHandler.scanMapDirect();
-    const path: PathInformation = await this.pathHandler.findNearestObjectPath(this.mapHandler.currentMap, 'Pinheiro');
+    const path: PathInformation = await this.pathHandler.findNearestObjectPath('Pinheiro');
     
     return path;
   }

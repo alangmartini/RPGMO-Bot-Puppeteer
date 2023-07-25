@@ -7,6 +7,7 @@ import Path from './interfaces/Path';
 import { PathInformation } from './interfaces/PathInformation';
 import PathFinderWithAStar from './pathFinders/PathFinderWithAStar';
 import GetPath from './pathFinders/GetPath';
+import Coordinate from './interfaces/Coordinate';
 
 const players: any = [];
 const findPathFromTo = (a: any, b: any, c: any) => {}
@@ -29,6 +30,10 @@ export default class PathHandler {
     this.mapHandler = mapHandler;
     this.movementHandler = movementHandler;
     this.pathFinder = new PathFinderWithAStar(this.mapHandler);
+  }
+
+  async findPathTo(initial: Coordinate, final: Coordinate) {
+    return await this.pathFinder.getPathTo(initial, final);
   }
 
   async findNearestObjectPath(objectName: string): Promise<PathInformation> {
