@@ -3,7 +3,9 @@ import sleep from '../utils/sleep';
 import sleepRandom from '../utils/sleepRandom';
 import GameBot from './GameBot.client';
 import MovementHandler from './Handlers/Movement.handler';
-import { Path, PathInformation, SquareLocale } from './Handlers/Path/PathHandler';
+import { Path } from './Handlers/Path/interfaces/Path';
+import { SquareLocale } from './Handlers/Path/SquareLocale';
+import { PathInformation } from './Handlers/Path/PathInformation';
 import ArrowKeys from './enums/ArrowKeys.enum';
 
 const players: any = [];

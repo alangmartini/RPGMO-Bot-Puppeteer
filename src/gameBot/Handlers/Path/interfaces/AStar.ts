@@ -1,22 +1,5 @@
-export type Coordinate = { x: number, y: number };
-
-export class Nod {
-    x: number;
-    y: number;
-    f: number;
-    g: number;
-    h: number;
-    parent: Nod | null;
-    
-    constructor(x: number, y: number) {
-        this.x = x;
-        this.y = y;
-        this.f = 0;
-        this.g = 0;
-        this.h = 0;
-        this.parent = null;
-    }
-}
+import Coordinate from './Coordinate';
+import Nod from './Nod';
 
 export function aStar(start: Coordinate, end: Coordinate, grid: boolean[][]): Nod[] | null {
     console.log("começando")
@@ -48,7 +31,6 @@ export function aStar(start: Coordinate, end: Coordinate, grid: boolean[][]): No
 
         // Found the goal
         if(currentNod.x === endNod.x && currentNod.y === endNod.y) {
-            console.log("OLAAAAAAA")
             let path: Nod[] = [];
             let current: Nod | null = currentNod;
 

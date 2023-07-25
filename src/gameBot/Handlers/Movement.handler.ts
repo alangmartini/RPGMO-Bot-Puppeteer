@@ -1,7 +1,8 @@
 import BrowserClient from '../../browserClient/BrowserClient.client';
 import sleep from '../../utils/sleep';
 import ArrowKeys from '../enums/ArrowKeys.enum';
-import { Path, SquareLocale } from './Path/PathHandler';
+import { Path } from './Path/interfaces/Path';
+import { SquareLocale } from './Path/SquareLocale';
 
 const players: any = [];
 const movementInProgress = (player: any) => {}
