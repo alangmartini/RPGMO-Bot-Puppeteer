@@ -1,6 +1,7 @@
 import BrowserClient from '../../browserClient/BrowserClient.client';
 import sleep from '../../utils/sleep';
 import ArrowKeys from '../enums/ArrowKeys.enum';
+import Coordinate from './Path/interfaces/Coordinate';
 import Path from './Path/interfaces/Path';
 import SquareLocale from './Path/interfaces/SquareLocale';
 
@@ -19,11 +20,16 @@ class MovementEvals {
 
 export default class MovementHandler {
   private browserClient: BrowserClient;
-  currentLocation: SquareLocale = { x: 0, y: 0 };
+  currentLocation: Coordinate = { x: 0, y: 0 };
 
   constructor(browserClient: BrowserClient) {
     this.browserClient = browserClient;
     
+  }
+
+  async getCurrentPosition(): Promise<Coordinate>  {
+    await this.updateCurrentLocation();
+    return this.currentLocation;
   }
 
   async waitStopMoving() {

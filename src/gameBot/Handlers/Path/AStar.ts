@@ -1,5 +1,5 @@
-import Coordinate from './Coordinate';
-import Nod from './Nod';
+import Coordinate from './interfaces/Coordinate';
+import Nod from './interfaces/Nod';
 
 export function aStar(start: Coordinate, end: Coordinate, grid: boolean[][]): Nod[] | null {
     console.log("começando")

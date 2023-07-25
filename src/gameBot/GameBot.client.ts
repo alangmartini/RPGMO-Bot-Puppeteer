@@ -7,13 +7,12 @@ import CaptchaHandler from './Handlers/Captcha.handler';
 import { EventEmitter } from 'events';
 import MapHandler from './Handlers/Map.handler';
 import PathHandler from './Handlers/Path/Path.handler';
-import { Path } from './Handlers/Path/interfaces/Path';
-import { SquareLocale } from './Handlers/Path/SquareLocale';
 import Watcher from './Watchers/Watcher.watcher';
 import InventoryHandler from './Handlers/Inventory.handler';
 import MovementHandler from './Handlers/Movement.handler';
-import { aStar } from './Handlers/Path/interfaces/AStar';
-import Nod from './Handlers/Path/Nod';
+import { aStar } from './Handlers/Path/AStar';
+import Nod from './Handlers/Path/interfaces/Nod';
+import SquareLocale from './Handlers/Path/interfaces/SquareLocale';
 
 
 class GameBot {
@@ -50,7 +49,7 @@ class GameBot {
     // Dependent handlers
     this.loginHandler = new LoginHandler(this.browserClient, this.pageHandler);
     this.captchaHandler = new CaptchaHandler(this.browserClient, this.eventEmitter);
-    this.pathHandler = new PathHandler(this.browserClient, this.mapHandler);
+    this.pathHandler = new PathHandler(this.browserClient, this.mapHandler, this.movementHandler);
 
     // Watchers
     this.captchaWatcher = new Watcher(

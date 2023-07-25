@@ -1,69 +1,51 @@
 import BrowserClient from '../../../browserClient/BrowserClient.client';
 import MapHandler from '../Map.handler';
 import MapObject from '../MapObject';
+import MovementHandler from '../Movement.handler';
+import { PathUtils } from './PathUtils';
 import Path from './interfaces/Path';
 import { PathInformation } from './interfaces/PathInformation';
-import RawPath from './interfaces/RawPath';
+import PathFinderWithAStar from './pathFinders/PathFinderWithAStar';
+import GetPath from './pathFinders/GetPath';
 
 const players: any = [];
 const findPathFromTo = (a: any, b: any, c: any) => {}
 
+
+export class PathEvals {
+  static getPathTo(x: number, y: number) {
+    return findPathFromTo(players[0], { i: x, j: y }, players[0]);
+  }
+}
+
 export default class PathHandler {
   private browserClient: BrowserClient;
   mapHandler: MapHandler;
+  private movementHandler: MovementHandler;
+  private pathFinder: GetPath;
 
-  constructor(browserClient: BrowserClient, mapHandler: MapHandler) {
+  constructor(browserClient: BrowserClient, mapHandler: MapHandler, movementHandler: MovementHandler) {
     this.browserClient = browserClient;
     this.mapHandler = mapHandler;
+    this.movementHandler = movementHandler;
+    this.pathFinder = new PathFinderWithAStar(this.mapHandler);
   }
 
-  evalGetPathTo(x: number, y: number) {
-    return findPathFromTo(players[0], { i: x, j: y }, players[0]);
-  }
+  async findNearestObjectPath(objectName: string): Promise<PathInformation> {
+    const objectsToFind: MapObject[] = await this.mapHandler.getObjectsByName(objectName);
 
-  async getPathTo(x: number, y: number): Promise<Path> {
-    const path: RawPath = await this.browserClient.evaluateFunctionWithArgsAndReturn(this.evalGetPathTo, x, y);
-
-    return path.map((square) => ({ x: square.i, y: square.j }));
-  }
-
-  async findNearestObjectPath(objects: MapObject[], objectName: string): Promise<PathInformation> {
-    const objectsToFind: MapObject[] = objects.filter((object) => object.name === objectName);
-
-    const allPathsPromises: Promise<Path>[] = objectsToFind.map((object) => {
-      return this.getPathTo(object.i, object.j);
-    });
-    const allPaths: Path[] = await Promise.all(allPathsPromises);
-    
-    const notFilteredObjects: MapObject[] = [];
-    let nonEmptyPath = allPaths.filter((path, index) => {
-      if (path.length > 0) {
-        notFilteredObjects.push(objectsToFind[index]);
-        return true;
-      }
-
-      return false;
-    });
-    
-    let indexShortestPath = 0;
-    const shortestPath = nonEmptyPath.reduce((shortestPath: any, currentPath: any, index: number) => {
-      if (currentPath.length < shortestPath.length) {
-        indexShortestPath = index;
-        return currentPath;
-      }
-      
-      return shortestPath;
-    }, nonEmptyPath[0]);
-    
-    const object = notFilteredObjects[indexShortestPath];
-    
-    return { path: shortestPath, object: object, location: { x: object.i, y: object.j } };
-  }
+    const currentLocation = await this.movementHandler.getCurrentPosition();
   
-  async getPathToNearestMob(name: string) {
-    await this.mapHandler.scanMapDirect();
-    const path: PathInformation = await this.findNearestObjectPath(this.mapHandler.currentMap, name);
-    
-    return path;
+    console.time("getAllPathsMultiThread");
+    const allPaths: Path[] = await this.pathFinder.getAllPathsMultiThread(objectsToFind, currentLocation);
+    console.timeEnd("getAllPathsMultiThread");
+
+    const { nonEmptyPaths, notFilteredObjects} = PathUtils.filterEmptyPaths(allPaths, objectsToFind);
+      
+    const { shortestPath, indexShortestPath } = PathUtils.findSmallestPath(nonEmptyPaths);
+
+    const closestObject = notFilteredObjects[indexShortestPath];
+
+    return { path: shortestPath, object: closestObject, location: { x: closestObject.i, y: closestObject.j } };
   }
 }

@@ -1,19 +1,10 @@
 import BrowserClient from '../browserClient/BrowserClient.client';
-import { aStar } from './Handlers/Path/interfaces/AStar';
-import Coordinate from './Handlers/Path/Coordinate';
-import Nod from './Handlers/Path/Nod';
 import sleep from '../utils/sleep';
-import sleepRandom from '../utils/sleepRandom';
 import GameBot from './GameBot.client';
-import MovementHandler from './Handlers/Movement.handler';
-import { Path } from './Handlers/Path/interfaces/Path';
-import { SquareLocale } from './Handlers/Path/SquareLocale';
-import { PathInformation } from './Handlers/Path/PathInformation';
-import ArrowKeys from './enums/ArrowKeys.enum';
+import Path from './Handlers/Path/interfaces/Path';
+import SquareLocale from './Handlers/Path/interfaces/SquareLocale';
 
 const players: any = [];
-
-
 
 export default class CombatBot extends GameBot {
   private nearestChest: SquareLocale = { x: 21, y: 17 };
@@ -28,7 +19,6 @@ export default class CombatBot extends GameBot {
     // Start several subroutines
     this.runWatchers();
 
-    
     await sleep(5000);
 
     // await this.movementHandler.updateCurrentLocation()
@@ -47,27 +37,27 @@ export default class CombatBot extends GameBot {
     // console.timeEnd('aStar')
 
     // console.log("pat is", pat)
+    const MOB_TO_FIGHT = 'Gray Wizard'
     while (true) {
       sleep(300);
       try {
         let isFull = await this.inventoryHandler.checkInventoryIsFull();
         console.log('isFull is:', isFull);
-
   
         if (isFull) {
-          const pathToChest: Path = await this.getPaathToChest(this.nearestChest) as Path;
+          const pathToChest: Path = await this.getPathToChest(this.nearestChest) as Path;
           await this.movementHandler.moveToDestination(pathToChest);
           await this.movementHandler.interactWithObject(this.nearestChest, 'Chest');
           await this.inventoryHandler.stashChest();
         } 
 
         await this.mapHandler.scanMapDirect();
-        const pathj = await this.pathHandler.getPathToNearestMob('Gray Wizard');
+        const pathj = await this.pathHandler.findNearestObjectPath(MOB_TO_FIGHT);
     
         await this.movementHandler.moveToDestination(pathj.path);
-        await this.movementHandler.interactWithObject(pathj.location, 'Mago cinzento');
+        await this.movementHandler.interactWithObject(pathj.location, MOB_TO_FIGHT);
         
-        sleep(1000)
+        sleep(1000);
         let isBusy = true;
 
         while (isBusy) {
