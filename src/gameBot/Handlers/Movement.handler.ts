@@ -1,3 +1,4 @@
+import { EventEmitter } from 'events';
 import BrowserClient from '../../browserClient/BrowserClient.client';
 import sleep from '../../utils/sleep';
 import ArrowKeys from '../enums/ArrowKeys.enum';
@@ -20,11 +21,16 @@ class MovementEvals {
 
 export default class MovementHandler {
   private browserClient: BrowserClient;
+  private eventEmitter: EventEmitter;
+  private pause: boolean = false;
+  
   currentLocation: Coordinate = { x: 0, y: 0 };
 
-  constructor(browserClient: BrowserClient) {
+  constructor(browserClient: BrowserClient, eventEmitter: EventEmitter) {
     this.browserClient = browserClient;
-    
+    this.eventEmitter = eventEmitter;
+    this.eventEmitter.on('pause', () => this.pause = true);
+    this.eventEmitter.on('resume', () => this.pause = false);
   }
 
   async getCurrentPosition(): Promise<Coordinate>  {
@@ -53,9 +59,11 @@ export default class MovementHandler {
       // In Path, the last SquareLocale is the nearest.
       const nextSquare = path[pathLength - 1 -i];
 
-      while (nextSquare.x !== this.currentLocation.x || nextSquare.y !== this.currentLocation.y) {
+      let movingTries = 0;
+      while (nextSquare.x !== this.currentLocation.x || nextSquare.y !== this.currentLocation.y && movingTries < 30) {
         await this.decideDirectionToMove(nextSquare, this.currentLocation);
         await this.updateCurrentLocation();
+        movingTries++;
       }
     }
 
@@ -63,6 +71,11 @@ export default class MovementHandler {
   }
 
   async decideDirectionToMove(nextSquare: SquareLocale, currentSquare: SquareLocale) {
+    while (this.pause) {
+      console.log("decideDirectionToMove paused, waiting for pause to be turned off");
+      await sleep(5000);
+    }
+
     if (nextSquare.x > currentSquare.x) {
       await this.browserClient.sendKeyPress(ArrowKeys.ArrowRight);
       // console.log("sending key")
@@ -91,6 +104,11 @@ export default class MovementHandler {
   }
 
   async interactWithObject(objectPosition: SquareLocale, object: string) {
+    while (this.pause) {
+      console.log("interactWithObject paused, waiting for pause to be turned off");
+      await sleep(5000);
+    }
+    
     await this.updateCurrentLocation();
     const currentLocation = this.currentLocation;
 

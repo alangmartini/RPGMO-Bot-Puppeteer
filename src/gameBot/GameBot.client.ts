@@ -5,7 +5,7 @@ import LoginHandler from './Handlers/Login.handler';
 import InjectionHandler from './Handlers/Injection.handler';
 import CaptchaHandler from './Handlers/Captcha.handler';
 import { EventEmitter } from 'events';
-import MapHandler from './Handlers/Map.handler';
+import MapHandler from './Handlers/Map/Map.handler';
 import PathHandler from './Handlers/Path/Path.handler';
 import Watcher from './Watchers/Watcher.watcher';
 import InventoryHandler from './Handlers/Inventory.handler';
@@ -45,7 +45,7 @@ class GameBot {
     this.injectionHandler = new InjectionHandler(this.browserClient);
     this.inventoryHandler = new InventoryHandler(this.browserClient);
     this.mapHandler = new MapHandler(this.browserClient);
-    this.movementHandler = new MovementHandler(browserClient);
+    this.movementHandler = new MovementHandler(browserClient, this.eventEmitter);
     
     // Dependent handlers
     this.loginHandler = new LoginHandler(this.browserClient, this.pageHandler);
@@ -71,6 +71,8 @@ class GameBot {
     await this.pageHandler.verifyIsLogged();
 
     await this.injectionHandler.modifyCaptchaShow();
+    await this.injectionHandler.modifyCaptchaSubmit();
+    await this.injectionHandler.modifyCaptchaSubmitResponse();
   }
 
   async runWatchers() {

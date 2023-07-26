@@ -29,8 +29,47 @@ export default class InjectionHandler {
         configurable: true
       })
     `);
-
   }
+
+  modifyCaptchaSubmitResponse = async () => {
+    await this.browserClient.getPage()!.evaluate(this.fnNewSubmitResponse);
+    await this.browserClient.getPage()!.evaluate(`
+      Object.defineProperty(Captcha, "submit_response", {
+        value: fnNewSubmitResponse,
+        writable: true,
+        enumerable: true,
+        configurable: true
+      })
+    `);
+  }
+
+  modifyCaptchaSubmit = async () => {
+    await this.browserClient.getPage()!.evaluate(this.fnNewSubmit);
+    await this.browserClient.getPage()!.evaluate(`
+      Object.defineProperty(Captcha, "submit_response", {
+        value: fnNewSubmit,
+        writable: true,
+        enumerable: true,
+        configurable: true
+      })
+    `);
+  }
+
+  fnNewSubmit = `function fnNewSubmit() {
+    console.log("Normal submit being called");
+    Timers.running("captcha_submit") || (Timers.set("captcha_submit", null_function, 1E3),
+    Socket.send("captcha", {
+        value: document.getElementById("captcha_input").value
+    }),
+    setCanvasSize())
+  }`
+
+  fnNewSubmitResponse = `function fnNewSubmitResponse(a) {
+    console.log("new submit a is", a)
+    a.status ? Captcha.hide() : (document.getElementById("captcha_result").style.display = "block",
+    document.getElementById("captcha_input").focus(),
+    preventBackButtonClose())
+  	}`
 
   fn = `function newShowFn(a) {
     console.log("captcha object is", a)

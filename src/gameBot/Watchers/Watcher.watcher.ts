@@ -10,22 +10,22 @@ export default class Watcher {
     private interval: number,
     private task: () => Promise<void>) {
       this.eventEmitter.on('pause', () => this.pause = true);
-      this.eventEmitter.on('resume', () => {
-        this.pause = false;
-        this.run();
-      });
+      this.eventEmitter.on('resume', () => this.pause = false);
   }
 
   async run() {
     if (this.isRunning) return;
     this.isRunning = true;
+    console.log('running watcher, outside while:', this.pause);
 
-    while (!this.pause) {
+    while (true) {
+      if (this.pause) {
+        await sleep(5000);
+        continue
+      }
+
       await this.task();
       await sleep(this.interval);
     }
-
-    this.eventEmitter.emit('resume');
-    this.isRunning = false;
   }
 }

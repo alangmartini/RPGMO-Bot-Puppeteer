@@ -12,6 +12,10 @@ const Captcha = {
   active: undefined,
 }
 
+// fazer apagar o texto ao escrever
+// achar outra forma de fechar a janela
+// dar preferencia para o pathfinding do jogo, e só então pro pathfinding do bot
+
 export default class CaptchaHandler {
   private browserClient: BrowserClient;
   private eventEmitter: EventEmitter;
@@ -24,15 +28,22 @@ export default class CaptchaHandler {
     this.eventEmitter = eventEmitter;
   }
 
-  async checkForCaptcha() {
+  async isCaptchaActive() {
     const isCaptchaActive = await this.browserClient.evaluateFunctionWithArgsAndReturn(() => {
       return Captcha.active;
     });
 
+    return isCaptchaActive;
+  }
+
+  async checkForCaptcha() {
+    const isCaptchaActive = await this.isCaptchaActive();
+
     if (isCaptchaActive) {
+      this.eventEmitter.emit('pause');
+
       console.log("Found captcha")
       console.log("Pausing all other activities");
-      this.eventEmitter.emit('pause');
       await this.downloadCaptcha();
       try {
         await this.solveCaptcha();
@@ -40,9 +51,9 @@ export default class CaptchaHandler {
         console.log("deu ruim", e);
       }
 
-      sleep(3000);
+      await sleep(1000);
 
-      this.browserClient.sendKeyPress(ArrowKeys.Escape);
+      this.eventEmitter.emit('resume');
       return;
     }
 
@@ -87,14 +98,17 @@ export default class CaptchaHandler {
     
     try {
       console.log("trying to type in captcha")
-      await this.browserClient.typeInPage('#captcha_input', captchaResult);
+      await this.browserClient.getPage()!
+        .$eval('#captcha_input', input => (input as any).value = '');
+      await this.browserClient.getPage()!.type('#captcha_input', captchaResult);
 
-      console.log("waiting for submit button")
-      // Wait for the submit button to appear
-      await this.browserClient.getPage()!.waitForSelector('[onclick="Captcha.submit();"]');
-
+  
       console.log("trying to submit")
-      await this.browserClient.getPage()!.click('[onclick="Captcha.submit();"]');
+      await this.browserClient.getPage()!.click("#captcha_holder > span:nth-child(5)");
+
+      await sleep(2000);
+
+      await this.browserClient.sendKeyPress(ArrowKeys.Escape);
     } catch (e) {
       console.log("deu ruim", e)
     }

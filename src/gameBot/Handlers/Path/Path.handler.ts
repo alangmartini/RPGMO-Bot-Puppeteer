@@ -1,5 +1,5 @@
 import BrowserClient from '../../../browserClient/BrowserClient.client';
-import MapHandler from '../Map.handler';
+import MapHandler from '../Map/Map.handler';
 import MapObject from '../MapObject';
 import MovementHandler from '../Movement.handler';
 import { PathUtils } from './pathFinders/PathUtils';
