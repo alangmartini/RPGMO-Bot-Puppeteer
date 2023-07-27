@@ -15,10 +15,7 @@
   "version": "1.0.0",
   "main": "./src/main.ts",
   "scripts": {
-    "start-i": "tsc && node ./dist/initializer.js",
-    "start": "tsc && node ./dist/main.js",
-    "start-proxy": "tsc && node ./dist/main.js --proxy true --proxy-port 6155 --proxy-address 23.129.254.173 --proxy-username rdxmcqdz --proxy-password 509j3cfmmbin",
-    "start-both": "npm run start & npm run start-proxy",
+    "start": "tsc && node ./dist/initializer.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

@@ -19,25 +19,18 @@ export default class LoginHandler {
   }
 
   async login() {
-    if (this.browserClient.isProxy) {
-      this.login_name = 'heroburp';
-      this.login_pass = 'heroburp';
-    }
-
     if (this.login_name == null || this.login_pass == null) {
       throw new Error('Missing username or password, set them in .env file');
     }
 
-    try {
-      await this.browserClient.getPage()?.waitForSelector(RpgMOSelectors.WORLD_OPTIONS, { visible: true, timeout: 10000 });
-    } catch {
-      throw new Error('Waited for worlds to appears, but never did.');
-    }
+    await this.browserClient.getPage()?.waitForSelector(RpgMOSelectors.WORLD_OPTIONS, { visible: true, timeout: 60000 });
+    // try {
+    // } catch {
+    //   throw new Error('Waited for worlds to appears, but never did.');
+    // }
 
-    await this.pageHandler.verifyIsLoginPage();
-
-    await this.browserClient.typeInPage(this.login_selector, this.login_name);
-    await this.browserClient.typeInPage(this.password_selector, this.login_pass);
+    await this.browserClient.typeInPage(this.login_selector, this.browserClient.configs.username);
+    await this.browserClient.typeInPage(this.password_selector, this.browserClient.configs.password);
 
     try {
       const worldOptions = await this.browserClient.evaluateFunctionWithArgsAndReturn(
@@ -70,7 +63,7 @@ export default class LoginHandler {
     await this.browserClient.getPage()!.waitForFunction(
       (username) => players[0].name === username,
       { timeout: 10000 },
-      this.login_name
+      this.browserClient.configs.username
     );
 
     console.log("Login finished");  

@@ -14,26 +14,6 @@ export default class PageHandler {
     this.browserClient = browserClient;
   }
 
-  evalIsLoginPage(LoginInputQuery: string) {
-    return document.querySelector(LoginInputQuery) != null;
-  }
-  
-  async verifyIsLoginPage() {
-    const isLoginPage = await this.browserClient.evaluateFunctionWithArgsAndReturn(
-      this.evalIsLoginPage, this.login_selector
-    ) as boolean;
-
-    if (!isLoginPage) {
-      throw new Error('Not on login page');
-    }
-  }
-
-  evalVerifyIsLogged(Username: string) {
-    console.log("username is", Username)
-    console.log("name is", players[0].name)
-    return players[0].name === Username;
-  }
-
   async verifyIsLogged() {
     // Thow error if world options is not visible
     await this.browserClient.getPage()?.waitForSelector(RpgMOSelectors.WORLD_OPTIONS, { visible: false, timeout: 10000 });

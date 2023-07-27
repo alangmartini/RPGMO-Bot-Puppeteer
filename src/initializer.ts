@@ -1,17 +1,7 @@
 import { promises as fs } from 'fs';
 import yaml from 'js-yaml';
 import { spawn } from 'child_process';
-
-interface BotConfig {
-    username: string;
-    password: string;
-    proxy?: boolean;
-    act?: boolean;
-    "proxy-address"?: string;
-    "proxy-port"?: number;
-    "proxy-username"?: string;
-    "proxy-password"?: string;
-}
+import { BotConfig } from './interfaces/BotConfig';
 
 interface Services {
     [key: string]: BotConfig;
@@ -26,16 +16,15 @@ const main = async () => {
         const yamlString = await fs.readFile('./initializer.yaml', 'utf8');
         const configs: Initializer = yaml.load(yamlString) as Initializer;
         
-        const botsConfigs = Object.keys(configs.services);
+        const botsConfigs = Object.entries(configs.services);
 
         for (const config of botsConfigs) {
-            const configString = JSON.stringify(config);
-            console.log(configString)
-            // const proc = spawn('node', ['main.js', configString]);
+            const configString = JSON.stringify(config[1]);
+            const proc = spawn('node', ['./dist/main.js', configString]);
 
-            // proc.stdout.on('data', (data: Buffer) => console.log(`stdout: ${data}`));
-            // proc.stderr.on('data', (data: Buffer) => console.error(`stderr: ${data}`));
-            // proc.on('close', (code: number | null) => console.log(`child process exited with code ${code}`));
+            proc.stdout.on('data', (data: Buffer) => console.log(`service ${config[0]} stdout: ${data}`));
+            proc.stderr.on('data', (data: Buffer) => console.error(`service ${config[0]} stderr: ${data}`));
+            proc.on('close', (code: number | null) => console.log(`service ${config[0]} process exited with code ${code}`));
         }
         
     } catch(err) {

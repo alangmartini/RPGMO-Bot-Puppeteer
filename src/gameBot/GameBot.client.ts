@@ -62,12 +62,12 @@ class GameBot {
   }
 
   async login() {
-    await this.browserClient.getPage()?.waitForSelector(RpgMOSelectors.WORLD_OPTIONS, { visible: true, timeout: 10000 });
-
-    await this.injectionHandler.setHotkeys();
-        
-    await this.loginHandler.login();
     
+    if (!this.browserClient.configs.login) return;
+    
+    await this.loginHandler.login();
+    await this.injectionHandler.setHotkeys();
+
     await this.pageHandler.verifyIsLogged();
 
     await this.injectionHandler.modifyCaptchaShow();
@@ -83,6 +83,12 @@ class GameBot {
     await this.movementHandler.updateCurrentLocation()
     const current = this.movementHandler.currentLocation;
     return await this.pathHandler.findPathTo(current, nearestChest);
+  }
+
+  async getPathToTarget(target: SquareLocale): Promise<PathInformation> {
+    await this.movementHandler.updateCurrentLocation()
+    const current = this.movementHandler.currentLocation;
+    return await this.pathHandler.findPathTo(current, target);
   }
 }
 

@@ -1,59 +1,33 @@
 import * as puppeteer from 'puppeteer';
 import PuppeteerConfigs from './configs/PuppeteerConfigs.handler';
 import ArrowKeys from '../gameBot/enums/ArrowKeys.enum';
-import minimist from 'minimist';
-
-interface IProxyInfo {
-  useProxy: boolean;
-  username: string;
-  password: string;
-  address: string;
-  port: string;
-}
+import { BotConfig } from '../interfaces/BotConfig';
 
 export default class BrowserClient implements IBrowserClient{
   private browser: puppeteer.Browser | null;
   private page: puppeteer.Page | null;
-  public isProxy: boolean = false;
+  public configs: BotConfig;
 
-  constructor() {
+  constructor(configs: BotConfig) {
+    this.configs = configs;
     this.browser = null;
     this.page = null;
   }
 
-  createArgsArray(proxyInfo?: IProxyInfo) {
-    const args = ['--enable-webgl', '--enable-features=WebRTC'];
+  createArgsArray() {
+    const args = ['--enable-webgl', '--enable-features=WebRTC', "--disable-notifications", "--mute-audio"];
     
-    if (proxyInfo?.useProxy) {
-      args.push(`--proxy-server=${proxyInfo.address}:${proxyInfo.port}`);
+    if (this.configs.proxy) {
+      const proxy = `--proxy-server=${this.configs['proxy-address']}:${this.configs['proxy-port']}`
+      console.log('proxy is:', proxy);
+      args.push(proxy);
     }
 
     return args;
   }
 
-  verifyProxy () {
-    const args = minimist(process.argv.slice(2));
-
-    const useProxy = args["proxy"] === 'true';
-
-    if (useProxy) {
-      this.isProxy = true;
-      const username = args["proxy-username"];
-      const password = args["proxy-password"];
-
-      const address = args["proxy-address"];
-      const port = args["proxy-port"];
-
-      return { useProxy, username, password, address, port };
-    }
-
-  }
-
   async init() {
-    const proxyInfo = this.verifyProxy();
-
-    const args = this.createArgsArray(proxyInfo);
-
+    const args = this.createArgsArray();
 
     this.browser = await puppeteer.launch({
       headless: false,
@@ -63,8 +37,8 @@ export default class BrowserClient implements IBrowserClient{
 
     this.page = await this.browser.newPage();
 
-    if (proxyInfo?.useProxy) {
-      await this.page.authenticate({ username: proxyInfo.username, password: proxyInfo.password });
+    if (this.configs.proxy) {
+      await this.page.authenticate({ username: this.configs['proxy-username']!, password: this.configs['proxy-password']! });
     }
   }
 
