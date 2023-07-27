@@ -11,7 +11,6 @@ export class MapScanner {
 
   async scanMapObjects() {
     const map: MapObject[] = await this.browserClient.evaluateFunctionWithArgsAndReturn(MapEvals.getCurrentMapDirect);
-
     return map;
   }
 

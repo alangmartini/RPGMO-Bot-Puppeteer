@@ -12,9 +12,12 @@ const Captcha = {
   active: undefined,
 }
 
-// fazer apagar o texto ao escrever
-// achar outra forma de fechar a janela
+// fazer apagar o texto ao escrever ok
+// achar outra forma de fechar a janela ok
 // dar preferencia para o pathfinding do jogo, e só então pro pathfinding do bot
+// fazer um algoritimo queauto corrige o path caso a distancia atual e a distancia do próximo passo seja maior que 1
+// fazer um algoritimo que descobre sozinho se o mob é do mapa 1 ou dois e qual caminho inter mapa ele deve fazer
+  // provavelmente terei que utilizar a api do jogo que armazena a informação de todos os mobs.
 
 export default class CaptchaHandler {
   private browserClient: BrowserClient;
@@ -106,7 +109,11 @@ export default class CaptchaHandler {
       console.log("trying to submit")
       await this.browserClient.getPage()!.click("#captcha_holder > span:nth-child(5)");
 
-      await sleep(2000);
+      await sleep(1000);
+
+      await this.browserClient.getPage()!.click("#captcha_bonus_assign_form > button");
+
+      await sleep(1000);
 
       await this.browserClient.sendKeyPress(ArrowKeys.Escape);
     } catch (e) {

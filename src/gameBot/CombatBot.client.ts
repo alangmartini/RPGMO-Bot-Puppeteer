@@ -30,30 +30,27 @@ export default class CombatBot extends GameBot {
 
     await sleep(5000);
 
-    const MOB_TO_FIGHT = 'Thief';
+    const MOB_TO_FIGHT = 'Green Wizard';
     const isMobInDungeonI = false;
     while (true) {
       if (this.pause) {
         await sleep(15000);
       }
 
-      await sleep(500)
       try {
-        sleep(500);
+        sleep(250);
         let isBusy = await this.checkIsBusy();
         // Trying the event emitter pausing first;
         // let isCaptcha = await this.captchaHandler.isCaptchaActive();
 
         // if (isBusy || isCaptcha) {
         if (isBusy) {
-          console.log("im busy")
           continue;
         }
 
         let isFull = await this.inventoryHandler.checkInventoryIsFull();
   
         const currentMap = await this.browserClient.getPage()!.evaluate(() => current_map);
-        console.log('currentMap is:', currentMap);
         if (isFull) {
           if (currentMap === 1 && isMobInDungeonI) {
             const ladderPathInfo: PathInformation = await this.getPathToChest(COORDINATES.DUNGEON_LADDER);
@@ -68,7 +65,6 @@ export default class CombatBot extends GameBot {
           await this.inventoryHandler.stashChest();
         } 
 
-
         if (currentMap === 0 && isMobInDungeonI) {
           const downLadderPathInfo: PathInformation = await this.getPathToChest(COORDINATES.DORPAT_DUNGEON_LADDER);
           await this.movementHandler.moveToDestination(downLadderPathInfo.path);
@@ -76,7 +72,7 @@ export default class CombatBot extends GameBot {
           await sleep(2000);
         } 
 
-        console.time('pathj');
+        console.time('pathj');         
         const pathj = await this.pathHandler.findNearestObjectPath(MOB_TO_FIGHT);
         console.timeEnd('pathj');
         await this.movementHandler.moveToDestination(pathj.path);

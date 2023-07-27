@@ -1,12 +1,15 @@
 import MapHandler from '../../Map/Map.handler';
 import MapObject from '../../MapObject';
 import { PathUtils } from './PathUtils';
-import { aStar } from './AStar';
+import { aStar, aStarReversed } from './AStar';
 import Coordinate from '../interfaces/Coordinate';
 import Path from '../interfaces/Path';
 import Nod from '../interfaces/Nod';
 import GetPath from './GetPath';
 import PathInformation from '../interfaces/PathInformation';
+
+
+const map_walkable = (a:any, b:any, c:any) => {}
 
 export default class PathFinderWithAStar extends GetPath {
   private mapHandler: MapHandler;
@@ -33,7 +36,7 @@ export default class PathFinderWithAStar extends GetPath {
         let newY = y + dir.y;
         
         // If the point is within the grid and walkable, return it
-        if(newX >= 0 && newY >= 0 && newX < grid.length && newY < grid[0].length && grid[newX][newY] === false) {
+        if(newX >= 0 && newY >= 0 && newX < grid.length && newY < grid[0].length && grid[newX][newY] !== false) {
             return { x: newX, y: newY };
         }
     }
@@ -51,9 +54,9 @@ export default class PathFinderWithAStar extends GetPath {
   async getPathTo(start: Coordinate, final: Coordinate): Promise<PathInformation> {
     const grid: boolean[][] = await this.mapHandler.getWalkableMapAsGrid();
     
-    const booleanGrid = grid.map((row) => row.map((square) => square ? true : false));
+    // const booleanGrid = grid.map((row) => row.map((square) => square ? true : false));
 
-    const finalAjusted = this.getClosestWalkablePoint(final.x, final.y, booleanGrid, start) as Coordinate;
-    return { path: aStar(start, finalAjusted, booleanGrid) as Nod[], location: final };
+    const finalAjusted = this.getClosestWalkablePoint(final.x, final.y, grid, start) as Coordinate;
+    return { path: aStarReversed(start, finalAjusted, grid) as Nod[], location: final };
   }
 }

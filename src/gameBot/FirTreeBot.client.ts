@@ -75,10 +75,10 @@ export default class FirTreeBot extends GameBot {
   //   return path;
   // }
 
-  async findNearestFirTreePath() {
-    await this.mapHandler.scanMapDirect();
-    const path: PathInformation = await this.pathHandler.findNearestObjectPath('Pinheiro');
+  // async findNearestFirTreePath() {
+  //   await this.mapHandler.scanMapDirect();
+  //   const path: PathInformation = await this.pathHandler.findNearestObjectPath('Pinheiro');
     
-    return path;
-  }
+  //   return path;
+  // }
 }

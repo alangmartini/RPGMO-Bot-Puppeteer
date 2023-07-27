@@ -3,14 +3,8 @@ import MapObject from '../MapObject';
 import { MapDataJSON } from './MapDataJSON';
 import { MapScanner } from './MapScanner';
 
-export const obj_g = (a: any) => { console.log(a) };
-export const current_map = 0;
-export const on_map = {
-  0: [[]]
-}
-
 export default class MapHandler {
-  private browserClient: BrowserClient;
+  public browserClient: BrowserClient;
   private mapScanner: MapScanner;
 
   public currentMapObjects: MapObject[] = [];
@@ -39,7 +33,6 @@ export default class MapHandler {
   async getObjectsByName(objectName: string): Promise<MapObject[]> {
     // Updates current map
     this.currentMapObjects = await this.mapScanner.scanMapObjects();
-
     // Returns all objects with the same name
     return this.currentMapObjects.filter((object) => object.name === objectName);
   }

@@ -19,9 +19,9 @@ export class PathEvals {
 
 export default class PathHandler {
   private browserClient: BrowserClient;
-  mapHandler: MapHandler;
   private movementHandler: MovementHandler;
   private pathFinder: PathFinderWithAStar;
+  mapHandler: MapHandler;
 
   constructor(browserClient: BrowserClient, mapHandler: MapHandler, movementHandler: MovementHandler) {
     this.browserClient = browserClient;
@@ -36,7 +36,7 @@ export default class PathHandler {
 
   async findNearestObjectPath(objectName: string): Promise<PathInformation> {
     const objectsToFind: MapObject[] = await this.mapHandler.getObjectsByName(objectName);
-    
+  
     const currentLocation = await this.movementHandler.getCurrentPosition();
 
     const distances = objectsToFind.map((object) => this
@@ -45,6 +45,7 @@ export default class PathHandler {
 
     // Get smallest distance
     const indexSmallestDistance = distances.indexOf(Math.min(...distances));
+    
     const closestObject = objectsToFind[indexSmallestDistance];
 
     const pathInfo = await this.pathFinder.getPathTo(currentLocation, { x: closestObject.i, y: closestObject.j });

@@ -51,7 +51,7 @@ export default class MovementHandler {
   }
 
   async moveToDestination(path: Path) {
-    const pathLength = path.length;    
+    const pathLength = path.length; 
 
     for (let i = 0; i < pathLength; i++) {
       await this.updateCurrentLocation();
@@ -66,8 +66,6 @@ export default class MovementHandler {
         movingTries++;
       }
     }
-
-    await sleep(500);
   }
 
   async decideDirectionToMove(nextSquare: SquareLocale, currentSquare: SquareLocale) {
@@ -114,22 +112,22 @@ export default class MovementHandler {
 
     if (currentLocation.x > objectPosition.x) {
       await this.browserClient.sendKeyPress(ArrowKeys.ArrowLeft);
-      await sleep(1000);
+      await sleep(250);
     }
 
     if (currentLocation.x < objectPosition.x) {
       await this.browserClient.sendKeyPress(ArrowKeys.ArrowRight);
-      await sleep(1000);
+      await sleep(250);
     }
 
     if (currentLocation.y > objectPosition.y) {
       await this.browserClient.sendKeyPress(ArrowKeys.ArrowDown);
-      await sleep(1000);
+      await sleep(250);
     }
 
     if (currentLocation.y < objectPosition.y) {
       await this.browserClient.sendKeyPress(ArrowKeys.ArrowUp);
-      await sleep(1000);
+      await sleep(250);
     }
   }
 
