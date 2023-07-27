@@ -1,16 +1,24 @@
 {
   "dependencies": {
     "dotenv": "^16.3.1",
+    "glob": "^10.3.3",
+    "minimist": "^1.2.8",
     "puppeteer": "^20.8.0"
   },
   "devDependencies": {
+    "@types/js-yaml": "^4.0.5",
+    "@types/minimist": "^1.2.2",
+    "@types/node": "^20.4.5",
     "typescript": "^5.1.6"
   },
   "name": "shadow-puppeteer",
   "version": "1.0.0",
   "main": "./src/main.ts",
   "scripts": {
+    "start-i": "tsc && node ./dist/initializer.js",
     "start": "tsc && node ./dist/main.js",
+    "start-proxy": "tsc && node ./dist/main.js --proxy true --proxy-port 6155 --proxy-address 23.129.254.173 --proxy-username rdxmcqdz --proxy-password 509j3cfmmbin",
+    "start-both": "npm run start & npm run start-proxy",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

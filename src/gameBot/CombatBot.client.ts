@@ -28,10 +28,14 @@ export default class CombatBot extends GameBot {
     // Start several subroutines
     this.runWatchers();
 
-    await sleep(5000);
+    let MOB_TO_FIGHT = 'Green Wizard';
+    if (this.browserClient.isProxy) {
+      MOB_TO_FIGHT = 'Gray Wizard';
+    }
 
-    const MOB_TO_FIGHT = 'Green Wizard';
     const isMobInDungeonI = false;
+
+
     while (true) {
       if (this.pause) {
         await sleep(15000);

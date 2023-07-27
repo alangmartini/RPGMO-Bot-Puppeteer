@@ -19,6 +19,11 @@ export default class LoginHandler {
   }
 
   async login() {
+    if (this.browserClient.isProxy) {
+      this.login_name = 'heroburp';
+      this.login_pass = 'heroburp';
+    }
+
     if (this.login_name == null || this.login_pass == null) {
       throw new Error('Missing username or password, set them in .env file');
     }

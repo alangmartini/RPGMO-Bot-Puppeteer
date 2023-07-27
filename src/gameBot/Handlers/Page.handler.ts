@@ -1,4 +1,5 @@
 import BrowserClient from '../../browserClient/BrowserClient.client';
+import sleep from '../../utils/sleep';
 import RpgMOSelectors from '../enums/RpgMOSelectors.enum';
 
 // Game variables that are necessary so linter wont cry
@@ -37,13 +38,6 @@ export default class PageHandler {
     // Thow error if world options is not visible
     await this.browserClient.getPage()?.waitForSelector(RpgMOSelectors.WORLD_OPTIONS, { visible: false, timeout: 10000 });
 
-
-    const isLogged = await this.browserClient.evaluateFunctionWithArgsAndReturn(
-      this.evalVerifyIsLogged, this.username
-      ) as boolean;
-      
-    if (!isLogged) {
-      throw new Error('Not logged in');
-    }
+    await sleep(5000);
   }
 }

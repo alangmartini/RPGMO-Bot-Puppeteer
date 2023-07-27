@@ -1,7 +1,7 @@
 import BrowserClient from '../../../browserClient/BrowserClient.client';
-import MapObject from '../MapObject';
-import { MapDataJSON } from './MapDataJSON';
-import { MapScanner } from './MapScanner';
+import MapObject from './interfaces/MapObject';
+import { MapDataJSON } from './interfaces/MapDataJSON';
+import { MapScanner } from './scanners/MapScanner';
 
 export default class MapHandler {
   public browserClient: BrowserClient;

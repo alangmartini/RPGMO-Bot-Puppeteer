@@ -1,6 +1,6 @@
 import BrowserClient from '../../../browserClient/BrowserClient.client';
 import MapHandler from '../Map/Map.handler';
-import MapObject from '../MapObject';
+import MapObject from '../Map/interfaces/MapObject';
 import MovementHandler from '../Movement.handler';
 import { PathUtils } from './pathFinders/PathUtils';
 import PathFinderWithAStar from './pathFinders/PathFinderWithAStar';
@@ -45,7 +45,7 @@ export default class PathHandler {
 
     // Get smallest distance
     const indexSmallestDistance = distances.indexOf(Math.min(...distances));
-    
+
     const closestObject = objectsToFind[indexSmallestDistance];
 
     const pathInfo = await this.pathFinder.getPathTo(currentLocation, { x: closestObject.i, y: closestObject.j });

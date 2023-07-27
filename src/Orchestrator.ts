@@ -12,6 +12,7 @@ export default class Orchestrator {
 
   constructor() {
     this.browserClient = new BrowserClient();
+
     const page = this.browserClient.getPage();
     
     // this.gameBot = new GameBot(this.browserClient);

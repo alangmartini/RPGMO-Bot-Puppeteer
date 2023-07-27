@@ -1,5 +1,5 @@
 import MapHandler from '../../Map/Map.handler';
-import MapObject from '../../MapObject';
+import MapObject from '../../Map/interfaces/MapObject';
 import { PathUtils } from './PathUtils';
 import { aStar, aStarReversed } from './AStar';
 import Coordinate from '../interfaces/Coordinate';

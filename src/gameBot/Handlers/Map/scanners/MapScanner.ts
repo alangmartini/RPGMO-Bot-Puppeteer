@@ -1,5 +1,5 @@
-import BrowserClient from '../../../browserClient/BrowserClient.client';
-import MapObject from '../MapObject';
+import BrowserClient from '../../../../browserClient/BrowserClient.client';
+import MapObject from '../interfaces/MapObject';
 import { MapEvals } from './MapEvals';
 
 export class MapScanner {

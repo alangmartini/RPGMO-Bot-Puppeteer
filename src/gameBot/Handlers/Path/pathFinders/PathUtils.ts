@@ -1,4 +1,4 @@
-import MapObject from '../../MapObject';
+import MapObject from '../../Map/interfaces/MapObject';
 import Coordinate from '../interfaces/Coordinate';
 import Path from '../interfaces/Path';
 import PathInformation from '../interfaces/PathInformation';

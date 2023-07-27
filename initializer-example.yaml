@@ -1,0 +1,13 @@
+services:
+  # bot1:
+  #   username: username1
+  #   password: password1
+  #   proxy: false
+  # bot2:
+  #   username: username2
+  #   password: password2
+  #   proxy: true
+  #   proxy-address: your-proxy-address
+  #   proxy-port: your-proxy-port
+  #   proxy-username: proxy-auth-username
+  #   proxy-password: proxy-auth-password
