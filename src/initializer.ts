@@ -30,11 +30,12 @@ const main = async () => {
 
         for (const config of botsConfigs) {
             const configString = JSON.stringify(config);
-            const proc = spawn('node', ['main.js', configString]);
+            console.log(configString)
+            // const proc = spawn('node', ['main.js', configString]);
 
-            proc.stdout.on('data', (data: Buffer) => console.log(`stdout: ${data}`));
-            proc.stderr.on('data', (data: Buffer) => console.error(`stderr: ${data}`));
-            proc.on('close', (code: number | null) => console.log(`child process exited with code ${code}`));
+            // proc.stdout.on('data', (data: Buffer) => console.log(`stdout: ${data}`));
+            // proc.stderr.on('data', (data: Buffer) => console.error(`stderr: ${data}`));
+            // proc.on('close', (code: number | null) => console.log(`child process exited with code ${code}`));
         }
         
     } catch(err) {
