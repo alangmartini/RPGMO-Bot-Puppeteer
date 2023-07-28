@@ -3,11 +3,6 @@ sourceCodes
 htmls
 .env
 original
-**/*.js
-*.js
-src/2captcha
-2captcha
-2captcha/*
 captchas
 captchas
 dist

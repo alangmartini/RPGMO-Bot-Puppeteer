@@ -1,7 +1,6 @@
 import BrowserClient from './browserClient/BrowserClient.client';
 import dotenv from 'dotenv';
 import GameBot from './gameBot/GameBot.client';
-import FirTreeBot from './gameBot/FirTreeBot.client';
 import CombatBot from './gameBot/CombatBot.client';
 import { BotConfig } from './interfaces/BotConfig';
 import GatheringBot from './gameBot/GatheringBot.client';
@@ -15,12 +14,6 @@ export default class Orchestrator {
     const configurations: BotConfig = this.getConfigurations();
 
     this.browserClient = new BrowserClient(configurations);
-
-    const page = this.browserClient.getPage();
-    
-    // // this.gameBot = new GameBot(this.browserClient);
-    // // this.firTreeBot = new FirTreeBot(this.browserClient);
-    // this.combatBot = new CombatBot(this.browserClient);
   }
 
   getConfigurations(): BotConfig {
