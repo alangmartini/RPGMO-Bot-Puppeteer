@@ -1,13 +1,72 @@
 services:
-  # bot1:
-  #   username: username1
-  #   password: password1
-  #   proxy: false
-  # bot2:
-  #   username: username2
-  #   password: password2
-  #   proxy: true
-  #   proxy-address: your-proxy-address
-  #   proxy-port: your-proxy-port
-  #   proxy-username: proxy-auth-username
-  #   proxy-password: proxy-auth-password
+  # Each bot is a chrome instance
+  bot1:
+    # Your user info
+    username: heroburp
+    password: heroburp
+    # If you want to use proxy
+    proxy: true
+    # Proxy data: only necessary if you set proxy to true
+    proxy-address: 23.129.254.173
+    proxy-port: 8080
+    # Proxy authentication
+    proxy-username: 
+    proxy-password: 
+    # If you want the bot to login in. Useful if its a new account and you want to create it in the proxy env
+    login: true
+    # If you want the bot to start after logging in.
+    # Useful if you want to do some stuff with the proxy on
+    act: true
+    # 'gathering' or 'combat'
+    bot-type: 'gathering'
+    # Important: enemy must be in the same map
+    enemy-to-fight: 'Gray Wizard'
+
+    # Target to gather. Only in bot-type gathering
+    target:
+      coordinates:
+        x: 8
+        y: 34
+    # Chest that will use to stash
+    chest:
+      coordinates:
+        x: 13
+        y: 33
+  bot2:
+    # You user info
+    username: inhotep
+    password: inhotep
+    proxy: false
+    login: true
+    act: true
+    bot-type: 'gathering'
+    enemy-to-fight: 'Green Wizard'
+    target:
+      coordinates:
+        x: 8
+        y: 34
+    chest:
+      coordinates:
+        x: 13
+        y: 33
+
+  bot3:
+    username: uncreated
+    password: uncreated
+    proxy: true
+    proxy-address: 45.157.126.0
+    proxy-port: 8080
+    proxy-username: 
+    proxy-password: 
+    bot-type: 'gathering'
+    enemy-to-fight: 'Gray Wizard'
+    login: true
+    act: true
+    target:
+      coordinates:
+        x: 8
+        y: 34
+    chest:
+      coordinates:
+        x: 13
+        y: 33

@@ -13,7 +13,7 @@ const COORDINATES = {
   DORPAT_DUNGEON_LADDER: {x: 66, y: 29 }
 }
 export default class CombatBot extends GameBot {
-  private nearestChest: SquareLocale = { x: 83, y: 38 };
+  private nearestChest: SquareLocale = this.browserClient.configs.chest.coordinates;
   private pause: boolean = false;
 
   constructor(browserClient: BrowserClient) {
