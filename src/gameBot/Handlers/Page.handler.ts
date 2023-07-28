@@ -16,7 +16,7 @@ export default class PageHandler {
 
   async verifyIsLogged() {
     // Thow error if world options is not visible
-    await this.browserClient.getPage()?.waitForSelector(RpgMOSelectors.WORLD_OPTIONS, { visible: false, timeout: 10000 });
+    await this.browserClient.getPage()?.waitForSelector(RpgMOSelectors.WORLD_OPTIONS, { visible: false, timeout: 50000 });
 
     await sleep(5000);
   }

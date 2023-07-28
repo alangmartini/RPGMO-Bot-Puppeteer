@@ -62,7 +62,7 @@ export default class LoginHandler {
     console.log("Waiting for login to finish");
     await this.browserClient.getPage()!.waitForFunction(
       (username) => players[0].name === username,
-      { timeout: 10000 },
+      { timeout: 55000 },
       this.browserClient.configs.username
     );
 
