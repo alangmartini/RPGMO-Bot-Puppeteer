@@ -8,8 +8,6 @@ const players: any[] = [];
 export default class LoginHandler {
   private browserClient: BrowserClient;
   private pageHandler: PageHandler;
-  private login_name = process.env.RPGMO_USERNAME;
-  private login_pass = process.env.RPGMO_PASSWORD;
   private login_selector = RpgMOSelectors.LOGIN_INPUT;
   private password_selector = RpgMOSelectors.PASSWORD_INPUT; 
 
@@ -19,16 +17,12 @@ export default class LoginHandler {
   }
 
   async login() {
-    if (this.login_name == null || this.login_pass == null) {
-      throw new Error('Missing username or password, set them in .env file');
+    if (this.browserClient.configs.login == null || this.browserClient.configs.password == null) {
+      throw new Error('Missing username or password, set them in initializer.yaml file');
     }
 
     await this.browserClient.getPage()?.waitForSelector(RpgMOSelectors.WORLD_OPTIONS, { visible: true, timeout: 60000 });
-    // try {
-    // } catch {
-    //   throw new Error('Waited for worlds to appears, but never did.');
-    // }
-
+  
     await this.browserClient.typeInPage(this.login_selector, this.browserClient.configs.username);
     await this.browserClient.typeInPage(this.password_selector, this.browserClient.configs.password);
 
